@@ -1,0 +1,22 @@
+package kr.or.ddit.student.consult.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@Controller
+@RequestMapping("/student/consult/*")
+public class ConsultController {
+	
+	//상담신청 양식
+	@RequestMapping(value="/consultationApply",method=RequestMethod.GET)
+	public String insertConsulting() {
+		return "student/consult/consultationApply";
+	}
+	
+	//교수 예약 일정 팝업 창
+	@RequestMapping(value="/popUp/consultSchedule",method=RequestMethod.GET)
+	public String resvationPop() {
+		return "/student/consult/popUp/consultSchedule";
+	}
+}

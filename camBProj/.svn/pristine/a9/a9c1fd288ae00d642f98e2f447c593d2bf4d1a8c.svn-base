@@ -1,0 +1,16 @@
+package kr.or.ddit.common.notice.service;
+
+import java.util.List;
+
+import kr.or.ddit.common.notice.vo.NoticeVO;
+
+public interface NoticeService {
+
+	int noticeInsert(NoticeVO noticeVo);
+
+	List<NoticeVO> noticeList(String pageNo);
+
+	int selectCnt();
+
+
+}

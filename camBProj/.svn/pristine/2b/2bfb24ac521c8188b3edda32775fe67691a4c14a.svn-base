@@ -1,0 +1,24 @@
+package kr.or.ddit.common.login.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.login.mapper.LoginMapper;
+import kr.or.ddit.common.login.service.LoginService;
+import kr.or.ddit.common.login.vo.MemberVO;
+
+
+@Service
+public class LoginServiceImpl implements LoginService{
+
+	@Autowired
+	private LoginMapper loginMapper;
+	
+	@Override
+	public MemberVO login(MemberVO memberVo) {
+
+		MemberVO memberVo2 = this.loginMapper.login(memberVo);
+		return memberVo2;
+	}
+
+}

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.util.auth.mapper.AuthMapper">
+	
+	<!--** AuthLine 결재 라인 쿼리 *************************************************************************************-->
+	<select id="authLineList" parameterType="hashMap" resultType="kr.or.ddit.util.auth.vo.AuthLineStepVO">
+		SELECT tt.rnum, tt.auth_line_num, tt.auth_line_name, tt.auth_line_type_code, tt.creator, TO_CHAR(tt.update_date, 'yyyy-mm-dd') update_date, tt.mem_id
+			FROM 
+				(SELECT ROWNUM rnum, t.auth_line_num, t.auth_line_name, t.auth_line_type_code, t.creator, t.update_date, t.mem_id
+				 FROM
+					(SELECT l.auth_line_num
+							, l.auth_line_name
+                            , fn_get_code_name('AUT_LIN', l.auth_line_type_code) auth_line_type_code
+                            , l.creator
+                            , l.update_date
+							, LISTAGG((s.mem_id), '-') WITHIN GROUP (ORDER BY s.sequence) AS mem_id
+					 FROM
+						auth_line l, auth_step s
+					 WHERE 
+						l.auth_line_type_code = s.auth_line_num
+					 GROUP BY 
+					 	l.auth_line_type_code, l.auth_line_num, l.auth_line_name, l.creator, l.update_date) t) tt
+			WHERE 
+				tt.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+			ORDER BY 
+				tt.auth_line_type_code, tt.auth_line_num
+	</select>
+	
+	<select id="authLineTotalCount" resultType="int">
+		SELECT
+		    COUNT(auth_line_num)
+		FROM
+		    auth_line 
+	</select>
+	
+	<!-- 결재 선 멤버 검색 -->
+	<select id="authStepSearch" parameterType="hashMap" resultType="hashMap">
+		SELECT t.rnum, t.mem_id "memId", t.name "name", t.mem_type_code "memTypeCode"
+				, t.univ_dept_num "univDeptNum", t.dept_code "deptCode", t.job_code "jobCode"
+		FROM (
+				SELECT 
+				    ROW_NUMBER() OVER (ORDER BY m.mem_id) rnum
+				    , m.mem_id, m.name
+				    , fn_get_code_name('MEM_TYP', m.mem_type_code) mem_type_code
+				    , (SELECT kor_name FROM UNIVERSITY_DEPARTMENT WHERE univ_dept_num = p.univ_dept_num) univ_dept_num
+				    , fn_get_code_name('DEP_COD', e.dept_code) dept_code
+				    , fn_get_code_name('JOB_COD', e.job_code) job_code
+				FROM 
+				    member m
+				LEFT JOIN professor p
+				    ON m.mem_id = p.prof_id
+				LEFT JOIN employee e
+				    ON m.mem_id = e.emp_id
+				WHERE 
+				    mem_type_code IN('02', '03')) t
+		WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+	</select>
+	
+	<insert id="authLineInsert" parameterType="kr.or.ddit.util.auth.vo.AuthLineVO">
+		<selectKey order="BEFORE" keyProperty="authLineNum" resultType="String">
+			SELECT  NVL(MAX(auth_line_num), TO_CHAR(SYSDATE, 'yyyyMM') || '000') + 1 
+			FROM 	auth_line
+			WHERE 	SUBSTR(auth_line_num, 1, 6) = TO_CHAR(SYSDATE, 'yyyyMM')
+		</selectKey>
+		INSERT INTO auth_line (
+		    auth_line_num
+		  , auth_line_name
+		  , auth_line_type_code
+		  , creator
+		) VALUES (
+		    #{authLineNum}
+		  , #{authLineName}
+		  , #{authLineTypeCode}
+		  , #{creator}
+		)
+	</insert>
+
+	<insert id="authStepInsert" parameterType="kr.or.ddit.util.auth.vo.AuthStepVO">
+		INSERT INTO auth_step (
+		    auth_line_num
+		  , mem_id
+		  , sequence
+		) VALUES (
+		    #{authLineNum}
+		  , #{memId}
+		  , #{sequence}
+		)
+	</insert>
+	<!--***********************************************************************************************************-->
+	
+	
+	
+	<!--** AuthDocForm 결재 문서 양식 쿼리 ***********************************************************************************-->
+	<!-- 결재 문서 양식 가져오기 -->
+	<select id="authDocFormDetail" parameterType="String" resultType="kr.or.ddit.util.auth.vo.AuthDocFormVO">
+		SELECT
+		    auth_doc_form_num
+		  , auth_doc_form_name
+		  , auth_doc_form
+		FROM
+		    auth_document_format
+		WHERE
+			auth_doc_form_num = '01'
+	</select>
+	
+	<!--**********************************************************************************************************-->
+	
+
+
+	<!--** AuthDoc 결재 문서 쿼리 *************************************************************************************-->
+	<!-- 결재 문서 생성하기 -->
+	<insert id="authDocInsert" parameterType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		<selectKey order="BEFORE" keyProperty="authDocNum" resultType="String">
+			SELECT  NVL(MAX(auth_doc_num), TO_CHAR(SYSDATE, 'yyyyMM') || '00000') + 1 
+			FROM 	auth_document
+			WHERE 	SUBSTR(auth_doc_num, 1, 6) = TO_CHAR(SYSDATE, 'yyyyMM')
+		</selectKey>
+		INSERT INTO auth_document (
+		    auth_doc_form_num
+		  , auth_doc_num
+		  , mem_id
+		  , file_gr_num
+		) VALUES (
+		    #{authDocFormNum}
+		  ,#{authDocNum}
+		  ,#{memId}
+		  ,#{fileGrNum}
+		)
+	</insert>
+	
+	<!-- 결재 리스트 가져오기 -->
+	<select id="authDocList" parameterType="hashMap" resultType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		SELECT * 
+		FROM (SELECT ROW_NUMBER() OVER (ORDER BY auth_doc_num DESC) rnum
+			    , auth_doc_form_num
+			    , auth_doc_num
+			    , auth_line_num
+			    , mem_id
+			    , file_gr_num
+			    , rcp_code
+			    , title
+			    , content
+			    , rcp_date
+			    , auth_stat_code
+			  FROM
+			      auth_document
+			  WHERE 
+			  	  mem_id = #{memId} ) t
+		WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+	</select>
+	
+	<!-- 결재 리스트의 데이터 수 가져오기 -->
+	<select id="authDocTotalCount" parameterType="hashMap" resultType="int">
+		SELECT COUNT(auth_doc_num)
+		FROM
+		    auth_document
+		WHERE mem_id = #{memId}
+	</select>
+	
+	<!-- 결재 상세 정보 가져오기 -->
+	<select id="authDocDetail" parameterType="String" resultType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		SELECT
+		    auth_doc_form_num
+		  , auth_doc_num
+		  , auth_line_num
+		  , mem_id
+		  , file_gr_num
+		  , rcp_code
+		  , title
+		  , content
+		  , rcp_date
+		  , auth_stat_code
+		FROM
+		    auth_document
+		WHERE 
+			auth_doc_num = #{authDocNum}
+	</select>
+	
+	<!--**********************************************************************************************************-->
+	
+</mapper>

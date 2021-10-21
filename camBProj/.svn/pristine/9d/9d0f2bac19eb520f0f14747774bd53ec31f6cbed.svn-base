@@ -1,0 +1,21 @@
+package kr.or.ddit.student.takeOff.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+
+public interface TakeOffService {
+	
+	public List<TakeOffVO> takeOffApplyList(Map<String, Object> map);
+	
+	public int takeOffApplyTotalCount();
+	
+	public TakeOffVO takeOffApplyDetail(String takeOffApplyNum);
+	
+	public int takeOffApply(TakeOffVO takeOffVo);
+	
+	public int takeOffApplyUpdate(TakeOffVO takeOffVo);
+	
+	public int takeOffApplyDelete(String takeOffApplyNum);
+}

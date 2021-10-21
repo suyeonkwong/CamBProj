@@ -1,0 +1,30 @@
+package kr.or.ddit.common.myPage.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.login.vo.MemberVO;
+import kr.or.ddit.common.myPage.mapper.MyPageMapper;
+import kr.or.ddit.common.myPage.service.MyPageService;
+
+@Service
+public class MyPageServiceImpl implements MyPageService {
+	@Autowired
+	private MyPageMapper myPageMapper;
+	
+	@Override
+	public MemberVO myPageList(String id) {
+		return this.myPageMapper.myPageList(id);
+	}
+
+	@Override
+	public int myPageUpdate(MemberVO memberVo) {
+		return this.myPageMapper.myPageUpdate(memberVo);
+	}
+
+	@Override
+	public int myPagePwUpdate(MemberVO memberVo)throws Exception {
+		return this.myPageMapper.myPagePwUpdate(memberVo);
+	}
+
+}

@@ -1,0 +1,42 @@
+package kr.or.ddit.common.myPage.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import kr.or.ddit.common.login.vo.MemberVO;
+import kr.or.ddit.common.myPage.service.MyPageService;
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
+
+@Controller
+public class MyPageController {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired(required=true)
+	MyPageService myPageService;
+	
+	@RequestMapping(value = "/common/myPage/myPageList", method = RequestMethod.GET)
+	public String myPageList(Model model, MemberVO memberVo, HttpServletRequest request, HttpSession session) {
+		
+		session = request.getSession();
+		logger.info(session.getAttribute("memberVo").getClass().toString());
+		memberVo = (MemberVO) session.getAttribute("memberVo");
+		
+		List<MemberVO> list = this.myPageService.myPageList(memberVo);
+		model.addAttribute("list", list);
+		
+		return "common/myPage/myPageList";
+	}
+	
+}

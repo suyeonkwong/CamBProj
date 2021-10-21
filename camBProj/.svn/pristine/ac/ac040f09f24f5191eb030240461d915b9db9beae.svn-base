@@ -1,0 +1,126 @@
+package kr.or.ddit.util.auth.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.util.auth.mapper.AuthMapper;
+import kr.or.ddit.util.auth.service.AuthService;
+import kr.or.ddit.util.auth.vo.AuthDocFormVO;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.auth.vo.AuthLineVO;
+import kr.or.ddit.util.auth.vo.AuthStepVO;
+
+@Service
+public class AuthServiceImpl implements AuthService{
+	
+	@Autowired
+	AuthMapper authMapper;
+	
+	/**
+	 *  AuthLine 결재 라인  
+	 */
+	@Override
+	public List<AuthLineStepVO> authLineList(Map<String, Object> map) {
+		List<AuthLineStepVO> authLineList = authMapper.authLineList(map);
+		return authLineList;
+	}
+
+	@Override
+	public int authLineTotalCount() {
+		return authMapper.authLineTotalCount();
+	}
+	
+	@Override
+	public List<Map<String, Object>> authStepSearch(Map<String, Object> map){
+		return authMapper.authStepSearch(map);
+	};
+	
+	@Override
+	public int authLineStepInsert(AuthLineStepVO authLineStepVo) {
+		
+		AuthLineVO authLineVo = new AuthLineVO();
+		authLineVo.setAuthLineName(authLineStepVo.getAuthLineName());
+		authMapper.authLineInsert(authLineVo);
+		String authLineNum = authLineVo.getAuthLineNum();
+		
+		String memIdListStr = authLineStepVo.getMemIdList();
+		String[] memIdList = memIdListStr.split("-");
+		System.out.println(">> memIdListStr : " + memIdListStr);
+		System.out.println(">> memIdList : " + memIdList.toString());
+		
+		for(int i=0; i<memIdList.length; i++) {
+			AuthStepVO authStepVo = new AuthStepVO();
+			authStepVo.setAuthLineNum(authLineNum);
+			authStepVo.setMemId(memIdList[i]);
+			authStepVo.setSequence(i+1);
+			
+			int result = authMapper.authStepInsert(authStepVo);
+			if(result <= 0) return 0; // 실패 시 0을 리턴  
+		}
+		return 1;
+	}
+	
+	/**
+	 *  AuthDocForm 결재 문서 양식  
+	 */
+	@Override
+	public AuthDocFormVO authDocFormDetail() {
+		return authMapper.authDocFormDetail();
+	}
+	
+	
+	/**
+	 *  AuthDoc 결재 문서
+	 */
+	@Override
+	public String authDocInsert(String authDocFormNum, String fileGrNum) {
+		
+		AuthDocVO authDocVo = new AuthDocVO();
+		
+		// authDocFormNum에 따라 memId(결재자)에 다른 값이 들어감 
+		String memId = ""; 
+		if("01".equals(authDocFormNum)) {
+			memId = "tempMemId"; // 직원을 검색해서 올려줘야 함
+		}
+		
+		authDocVo.setMemId(memId);
+		authDocVo.setAuthDocFormNum(authDocFormNum);
+
+		// 첨부 파일 값이 있다면, 파일 그룹 번호도 세팅
+		if(!"".equals(fileGrNum) || fileGrNum != null) {
+			authDocVo.setFileGrNum(fileGrNum);
+		}
+		
+		// insert 작업 후
+		authMapper.authDocInsert(authDocVo);
+		
+		// authDocNum 반환
+		return authDocVo.getAuthDocNum();
+	}
+
+	@Override
+	public List<AuthDocVO> authDocList(Map<String, Object> map) {
+		return authMapper.authDocList(map);
+	}
+
+	@Override
+	public int authDocTotalCount(Map<String, Object> map) {
+		return authMapper.authDocTotalCount(map);
+	}
+
+	@Override
+	public AuthDocVO authDocDetail(String authDocNum) {
+		return authMapper.authDocDetail(authDocNum);
+	}
+
+	
+
+
+
+
+	
+}

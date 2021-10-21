@@ -1,0 +1,11 @@
+package kr.or.ddit.common.allNotice.mapper;
+
+import java.util.List;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.common.allNotice.vo.AllNoticeVO;
+@Mapper("allNoticeMapper")
+public interface AllNoticeMapper {
+
+	List<AllNoticeVO> selectAllNoticeList();	
+}

@@ -1,0 +1,95 @@
+package kr.or.ddit.util.auth.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.util.auth.service.AuthService;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+
+@Controller
+@RequestMapping("/auth")
+public class AuthDocController {
+	
+	@Autowired
+	AuthService authService;
+	
+	// 테스트 용
+	@RequestMapping("/auth")
+	String auth() {
+		return "auth/authDocForm/takeOff";
+	}
+	
+	/**
+	 * 결재가 필요한 신청의 데이터를 insert할 때 필요한 결재 문서 번호를 생성한다.
+	 * @param authDocFormNum : 신청 유형 구분하는 결재 문서 양식 번호를 파라미터로 입력한다.
+	 * 						- 0910 현재 하드코딩됨(휴학 "01", 봉사 "06", 강의개설 "07") 
+	 * @param fileGrNum : 파일 그룹 번호
+	 * 			 			- 파일이 첨부되지 않은 경우에는 ("") 빈 값을 입력한다.   
+	 * @return authDocNum : 신청을 결재에 올리는 결재 문서 번호
+	 */
+	public String authDocInsert(String authDocFormNum, String fileGrNum) {
+		String authDocNum = authService.authDocInsert(authDocFormNum, fileGrNum);
+		return authDocNum;
+	}
+	
+	/**
+	 * 담당 교직원에게 결재 리스트를 보여준다.
+	 * @param map : 페이지 번호 pageNo, 회원 아이디 memId 
+	 */
+	@RequestMapping(value = "/authDocList", method = RequestMethod.GET)
+	public String authDocList(@RequestParam Map<String, Object> map, Model model) { 
+		
+		if(!map.containsKey("pageNo")) map.put("pageNo", "1"); // 페이지 번호가 없으면 1으로 넣어주기
+		
+		List<AuthDocVO> authDocList = authService.authDocList(map);
+		model.addAttribute("authDocList", authDocList);
+		
+		// 페이징 처리
+		int pageNo = Integer.parseInt(String.valueOf(map.get("pageNo")));
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(pageNo);
+		paginationInfo.setRecordCountPerPage(5);
+		paginationInfo.setPageSize(5);
+		paginationInfo.setTotalRecordCount(authService.authDocTotalCount(map));
+		model.addAttribute("paginationInfo", paginationInfo);
+		return "auth/authDoc/authDocList";
+	}
+	
+	/**
+	 * 결재 리스트에서 한 건을 클릭하면 승인/미승인 할 수 있는 상세 페이지를 보여준다.
+	 */
+	@RequestMapping(value = "/authDocDetail", method = RequestMethod.GET)
+	public String authDocDetail(@RequestParam String authDocNum, Model model) {
+		AuthDocVO authDocVo = authService.authDocDetail(authDocNum);
+		model.addAttribute("authDocVo", authDocVo);
+		return "auth/authDoc/authDocDetail";
+	}
+	
+	/**
+	 * 결재선 고르기
+	 */
+	@RequestMapping(value = "/authLineSearchPopup", method = RequestMethod.GET)
+	public String authLineSearch() {
+		return "auth/authDoc/popup/authLineSearchPopup";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

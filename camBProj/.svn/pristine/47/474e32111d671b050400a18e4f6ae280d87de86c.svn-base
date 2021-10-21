@@ -1,0 +1,25 @@
+package kr.or.ddit.admin.member.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.admin.member.vo.MemberVO;
+
+public interface MemberService {
+	
+//	멤버 목록
+	List<MemberVO> selectMemberList(Map<String, Object> map) throws Exception;
+	
+//	멤버 등록
+	String insertMember(MemberVO memberVo) throws Exception;
+	
+//	멤버상세
+	MemberVO detailMember(String memId) throws Exception;
+	
+//	멤버수정
+	int updateMember(MemberVO memberVo) throws Exception;
+	
+//	멤버 삭제
+	int deleteMember(MemberVO memberVo) throws Exception;
+
+}

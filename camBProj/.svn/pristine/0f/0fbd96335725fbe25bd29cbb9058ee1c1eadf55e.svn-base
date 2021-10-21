@@ -1,0 +1,140 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script src="\resources\js\jquery.min.js"></script>
+<div>
+	<div style="width: 80%;">
+		<form action="/student/volunteer/volunteerListAppApply" 
+		 enctype="multipart/form-data" method="post" id="insertForm">
+			<div>	
+				<div>
+					<div style="display: inline-block;">
+						시작일자<span style="color: red;">*</span><br />
+						<input type="date" id="startDate" name="startDate" 
+						style="width: 250px;">
+					</div>
+					<div style="display: inline-block;">
+						종료일자<span style="color: red;">*</span><br />
+						<input type="date" id="endDate" name="endDate"
+						style="width: 250px;">
+					</div>
+					<div style="display: inline-block;">
+						인정시간<span style="color: red;">*</span><br />
+						<input type="text" id="volRecogTime" name="volRecogTime"
+						style="width: 150px;">
+					</div>
+				</div>
+				<br />
+				<div>
+					<div style="display: inline-block;">
+						활동종류<span style="color: red;">*</span><br />
+						<select id="volActCode" name="volActCode"
+						style="width: 250px;">
+							<c:forEach var="code" items="${volAct}">
+								<option value="${code.codeVal}">${code.codeName}</option>
+							</c:forEach>
+<!-- 							<option value="사무보조">사무보조</option> -->
+<!-- 							<option value="일반봉사" selected>일반봉사</option> -->
+<!-- 							<option value="교육봉사">교욱봉사</option> -->
+<!-- 							<option value="해외봉사">해외봉사</option> -->
+<!-- 							<option value="지도봉사">지도봉사</option> -->
+<!-- 							<option value="헌혈">헌혈</option> -->
+						</select>
+					</div>
+					<div style="display: inline-block;">
+						기관명<span style="color: red;">*</span><br />
+						<input type="text" id="insName" name="insName"
+						style="width: 250px;">
+					</div>
+					<div style="display: inline-block;">
+						신청상태<br />
+						<select id="procStatCode" name="procStatCode" style="width: 150px; background-color: #F1F2F8" disabled="disabled">
+							<c:forEach var="code" items="${proSta}">
+								<option value="${code.codeVal}">${code.codeName}</option>
+							</c:forEach>
+						</select>
+<!-- 						<input type="text" id="procStatCode" name="procStatCode" value="01" readonly -->
+<!-- 						style="width: 150px; background-color: #F1F2F8"> -->
+					</div>
+				</div>
+				<br />
+				<div>
+					<div style="display: inline-block;">
+						활동내용<span style="color: red;">*</span><br />
+						<input type="text" id="volActContenT" name="volActContenT"
+						style="width: 650px;">
+					</div>
+				</div>
+				<div>
+					<div style="display: inline-block;">
+						반려사유<br />
+						<input type="text" id="disauthRsn" name="disauthRsn" readonly
+						style="width: 650px; background-color: #F1F2F8">
+					</div>
+				</div>
+				<div>
+					<div>
+						청부파일<span style="color: red;">*</span><br />
+						<input type="file" id="fileList" name="fileList" multiple>
+					</div>
+				</div>
+			</div>
+			<br /><br /><br />
+			<div style="width: 650px;">
+				<div style="float: left;">
+					<button type="button" onclick="javascript:history.go(-1)">목록</button>
+				</div>
+				<div style="float: right;">
+					<button type="button" id="btnSubmit">저장</button>
+					<button type="button" id="btnCancel">취소</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		//취소 버튼
+		$("#btnCancel").on("click",function(){
+			var result = confirm("취소한 내역은 삭제됩니다. 정말 취소하시겠습니까?");
+			if(result){
+				$(location).attr('href','/student/volunteer/volunteerListAppApply');
+			}else{
+				return;
+			}		
+		});
+		
+		//저장버튼(등록)
+		$("#btnSubmit").on("click",function(){
+			if($("#startDate").val()==""){
+				alert("시작일자를 선택해주세요.");
+				return;
+			}
+			if($("#endDate").val()==""){
+				alert("종료일자를 선택해주세요.");
+				return;
+			}
+			if($("#volRecogTime").val()==""){
+				alert("인정시간을 입력해주세요.");
+				return;
+			}
+			if($("#volActCode").val()==""){
+				alert("활동종류를 선택해주세요.");
+				return;
+			}
+			if($("#insName").val()=="" ||$("#insName").val()==null){
+				alert("기관명을 입력해주세요.");
+				return;
+			}
+			if($("#volActContenT").val()==""){
+				alert("활동내용을 입력해주세요.");
+				return;
+			}
+			if($("#fileList").val()==""){
+				alert("파일을 선택해주세요.");
+				return;
+			}
+			
+			$("#insertForm").submit();
+		});
+	});
+</script>

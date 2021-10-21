@@ -1,0 +1,21 @@
+package kr.or.ddit.common.allNotice.service.impl;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.allNotice.mapper.AllNoticeMapper;
+import kr.or.ddit.common.allNotice.service.AllNoticeService;
+import kr.or.ddit.common.allNotice.vo.AllNoticeVO;
+
+@Service
+public class AllNoticeServiceImpl implements AllNoticeService {
+	@Autowired
+	private AllNoticeMapper allNoticeMapper;
+	
+	//전체공지 리스트 조회
+	@Override
+	public List<AllNoticeVO> selectAllNoticeList(){
+		return this.allNoticeMapper.selectAllNoticeList();
+	}
+}

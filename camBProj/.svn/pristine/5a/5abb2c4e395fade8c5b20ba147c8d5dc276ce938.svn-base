@@ -1,0 +1,141 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form"   uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="ui"     uri="http://egovframework.gov/ctl/ui"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+
+<div id="body">
+
+	<h1 class="h3 mb-2 text-gray-800">복적 재입학</h1>
+	
+	<p class="mb-4">
+	</p>
+	
+	<div class="card shadow mb-4">
+	
+		<div class="card-header py-3">
+			<h6 class="m-0 font-weight-bold text-primary">복적 재입학 신청 내역</h6>
+		</div>
+		
+		<div class="card-body">
+			<div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+				<div class="row">
+					<div class="col-sm-12">
+						<table class="table table-bordered dataTable" id="dataTable" style="width: 100%;" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+							<colgroup>
+								<col width= "150px">
+								<col width= "150px">
+								<col width= "300px">
+								<col width= "150px">
+								<col width= "auto">
+								<col width= "80px">
+							</colgroup>
+							<thead>
+								<tr role="row">
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >접수번호</th>
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >신청일자</th>
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >복적 재입학 학기</th>
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >처리상태</th>
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >미승인 사유</th>
+									<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" >취소</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:if test="${readmissionApplyList == '[]'}">
+									<tr>
+										<td colspan="6" class="text-center">신청 내역이 없습니다. </td>
+									</tr>
+								</c:if>
+								
+								<c:forEach items="${readmissionApplyList}" var="row">
+									<tr>
+										<td>${row.readmNum}</td>
+										<td>${row.applyDate}</td>
+										<td>${row.year}-${row.semCode}</td>
+										<td>${row.procStatCode}</td>
+										<td>${row.disauthRsn}</td>
+										<!-- 처리 상태 '접수' 인 경우 활성화-->
+										<td class="text-center">
+											<button type="button" onclick="frmDelete(${row.readmNum});" class="btn btn-danger btn-sm" 
+												<c:if test="${row.procStatCode != '접수'}">disabled</c:if>>
+												<i class="fas fa-trash-alt"></i>
+											</button>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+						<c:set var="pageNo" value="${param.pageNo}" />
+						<c:if test="${param.pageNo==null || param.pageNo==''}">
+							<c:set var="pageNo" value="1" />
+						</c:if>
+						<!-- get방식으로 url을 통해 삭제하지 못하도록 post방식으로 삭제 요청 -->
+						<form action="/student/readmission/readmApplyDelete" method="post" id="frm">
+							<input type="hidden" id="readmNum" name="readmNum" />
+							<input type="hidden" name="pageNo"  value="${pageNo}"/> 
+						</form>
+					</div>
+				</div>
+				<!-- paging -->	
+				<div class="row">
+					<div id="paging" class="col-sm-12 text-center">
+		        		<ul class="pagination">
+					    	<li style="list-style: none;" class="paginate_button page-item previous <c:if test="${paginationInfo.firstPageNoOnPageList <= 5 }">disabled</c:if>">
+					        	<a href="/student/readmission/readmApplyList?pageNo=${paginationInfo.firstPageNoOnPageList - 5 }" data-dt-idx="0" class="page-link">이전</a>
+					        </li>
+					       
+							<c:forEach var="pageNo" begin="${paginationInfo.firstPageNoOnPageList }" end="${paginationInfo.lastPageNoOnPageList }" varStatus="stat">
+					        	<li style="list-style: none;" class="paginate_button page-item <c:if test="${pageNo == param.pageNo || (pageNo==1 && param.pageNo ==null)}">active</c:if>">
+					            	<a href="/student/readmission/readmApplyList?pageNo=${pageNo}" data-dt-idx="${pageNo}" class="page-link">${pageNo}</a>
+					            </li>
+					        </c:forEach>
+					       
+					        <li style="list-style: none;" class="paginate_button page-item next <c:if test="${paginationInfo.lastPageNoOnPageList == paginationInfo.totalPageCount}">disabled</c:if>">
+					          <a href="/student/readmission/readmApplyList?pageNo=${paginationInfo.lastPageNoOnPageList + 1 }" data-dt-idx="${paginationInfo.lastPageNoOnPageList + 1 }" class="page-link">다음</a>
+					        </li>
+						</ul>
+		        	</div> <!-- //end paging -->
+	        	</div>
+	        	
+	        	<hr>
+	        	
+	        	<!-- button -->	
+				<div class="row">
+					<div class="col-sm-12 text-right">
+						<button type="button" class="btn btn-primary" onclick="location.href='/student/readmission/readmApplyInsertView'">신청</button>
+					</div> <!-- //end button -->
+				</div>
+			</div>
+			
+					
+		</div>
+		
+	</div>
+
+</div>
+
+
+<script type="text/javascript">
+	
+	function frmDelete(readmNum) {
+		if(!confirm("복학 신청을 취소하시겠습니까?")){
+			return;
+		}
+		$("#readmNum").val(readmNum);
+		$("#frm").submit();
+	}
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+package kr.or.ddit.student.dorm.vo;
+
+public class DormVO {
+	
+	private String stdId;                 //학번
+	private String year;                  //년도
+	private String acptYn;                //합격 여부
+	private String feePayYn;              //비용 납부 여부
+	private String semCode;               //학기 코드
+	private String entrApplyNum;          //입실 신청 번호 - 기본키
+	private String buildCode;             //건물 코드
+	
+	public String getStdId() {
+		return stdId;
+	}
+	public void setStdId(String stdId) {
+		this.stdId = stdId;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	public String getAcptYn() {
+		return acptYn;
+	}
+	public void setAcptYn(String acptYn) {
+		this.acptYn = acptYn;
+	}
+	public String getFeePayYn() {
+		return feePayYn;
+	}
+	public void setFeePayYn(String feePayYn) {
+		this.feePayYn = feePayYn;
+	}
+	public String getSemCode() {
+		return semCode;
+	}
+	public void setSemCode(String semCode) {
+		this.semCode = semCode;
+	}
+	public String getEntrApplyNum() {
+		return entrApplyNum;
+	}
+	public void setEntrApplyNum(String entrApplyNum) {
+		this.entrApplyNum = entrApplyNum;
+	}
+	public String getBuildCode() {
+		return buildCode;
+	}
+	public void setBuildCode(String buildCode) {
+		this.buildCode = buildCode;
+	}
+	
+	@Override
+	public String toString() {
+		return "DormVO [stdId=" + stdId + ", year=" + year + ", acptYn=" + acptYn + ", feePayYn=" + feePayYn
+				+ ", semCode=" + semCode + ", entrApplyNum=" + entrApplyNum + ", buildCode=" + buildCode + "]";
+	}
+	
+}

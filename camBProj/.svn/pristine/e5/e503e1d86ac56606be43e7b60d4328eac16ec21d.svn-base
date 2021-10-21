@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.registrationLecture.mapper.RegistrationLectureMapper">
+	
+	<!-- 특정 학기의 수강 신청 가능한 강의 목록 가져오기 year, semCode, openYn
+		한글 이름 필요한 게 있으면 함수 사용하기
+	-->
+	<select id="registrationLectureSelect" parameterType="kr.or.ddit.student.registrationLecture.vo.LectureOpenAndSyllabusVO" resultType="kr.or.ddit.student.registrationLecture.vo.LectureOpenAndSyllabusVO">
+		SELECT t.*
+		FROM (
+				SELECT
+				  ROW_NUMBER() OVER (ORDER BY le.subj_num DESC) rnum
+				  , le.prof_id
+				  , le.subj_num
+				  , le.lect_open_num
+				  , le.lect_name
+				  , le.year
+				  , le.sem_code
+				  , le.cred
+				  , le.room_idn_num
+				  , le.syl_num
+				  , le.subj_type_code
+				  , le.univ_dept_num
+				  , le.divide_num
+				  , le.max_std_cnt
+				  , le.std_cnt
+				  , le.open_yn
+				  , sy.lect_ovr
+				  , sy.lect_goal
+				  , sy.lect_method
+				  , sy.w1_lect_plan
+				  , sy.w2_lect_plan
+				  , sy.w3_lect_plan
+				  , sy.w4_lect_plan
+				  , sy.w5_lect_plan
+				  , sy.w6_lect_plan
+				  , sy.w7_lect_plan
+				  , sy.w8_lect_plan
+				  , sy.w9_lect_plan
+				  , sy.w10_lect_plan
+				  , sy.w11_lect_plan
+				  , sy.w12_lect_plan
+				  , sy.w13_lect_plan
+				  , sy.w14_lect_plan
+				  , sy.w15_lect_plan
+				  , sy.w16_lect_plan
+				  , sy.main_txtb
+				  , sy.sec_txtb
+				  , sy.mid_reflect_per
+				  , sy.final_reflect_per
+				  , sy.attend_reflect_per
+				  , sy.assign_relect_per
+				  , sy.quiz_reflect_per
+				  , sy.debate_reflect_per
+				  , sy.other_reflect_per
+				  , sy.otherthings
+				  , su.grdtn_requ_yn
+				FROM
+				    lecture_open le, syllabus sy, subject su
+				WHERE
+					le.syl_num = sy.syl_num
+				  AND 
+				 	le.subj_num = su.subj_num
+			 ) t
+		WHERE t.rnum BETWEEN #{firstIndex} AND #{lastIndex}
+	</select>
+	
+	<!-- 특정 학기에 장바구니에 담은 강의 목록 가져오기 -->	
+	
+	<!-- 특정 학기에 신청 완료한 강의 목록 가져오기 -->
+	<select id="registrationLectureApplySelect" parameterType="kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO" resultType="kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO">
+		SELECT t.rnum, t.std_id, t.lect_open_num, t.year, t.sem_code, t.std_rgst_sem, t.std_grade
+				, t.lect_univ_dept_num, FN_GET_UNIV_DEPT_NAME(t.lect_univ_dept_num) lect_univ_dept_name
+				, t.lect_grdtn_requ_yn, t.apply_date
+		FROM (
+			SELECT
+			  ROW_NUMBER() OVER (ORDER BY r.apply_date DESC) rnum
+			  , r.std_id
+			  , r.lect_open_num
+			  , l.year
+			  , l.sem_code
+			  , r.std_rgst_sem
+			  , r.std_grade
+			  , r.lect_univ_dept_num
+			  , r.lect_grdtn_requ_yn
+			  , r.apply_date
+			FROM
+			    registration_lecture r, lecture_open l
+			WHERE 
+				r.lect_open_num = l.lect_open_num
+			  AND 
+			  	r.std_id = #{stdId}
+			<if test="year != null and year != ''">
+			  AND 
+			  	l.year = #{year}
+			  AND 
+			  	l.sem_code = #{semCode}
+			</if>
+			) t
+			WHERE t.rnum BETWEEN #{firstIndex} AND #{lastIndex}
+	</select>
+	
+	<!-- 수강 신청한 목록 수 -->
+	<select id="registrationLectureCount" parameterType="kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO" resultType="int">
+		SELECT
+		    COUNT(r.lect_open_num) 
+		FROM
+		    registration_lecture r, lecture_open l
+		WHERE 
+			r.lect_open_num = l.lect_open_num
+		  AND 
+		  	r.std_id = #{stdId}
+		<if test="year != null and year != ''">
+		  AND 
+		  	l.year = #{year}
+		  AND 
+		  	l.sem_code = #{semCode}
+		</if>
+	</select>
+	
+	
+	<!-- 수강 신청하기 -->
+	<insert id="registrationLectureInsert" parameterType="kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO">
+		INSERT INTO registration_lecture (
+		    std_id
+		  , lect_open_num
+		  , std_rgst_sem
+		  , std_grade
+		  , lect_univ_dept_num
+		  , lect_grdtn_requ_yn
+		) VALUES (
+		    #{stdId}
+		  , #{lectOpenNum}
+		  , #{stdRestSem}
+		  , #{stdGrade}
+		  , #{lectUnivDeptNum}
+		  , #{lectGrdtnRequYn}
+		)
+	</insert>
+	
+	<!-- 수강 신청취소하기 -->
+	<delete id="registrationLectureDelete" parameterType="kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO">
+		DELETE FROM registration_lecture
+		WHERE
+		    std_id = #{stdId}
+		  AND   
+		  	lect_open_num = #{lectOpenNum}
+	</delete>
+	
+</mapper>

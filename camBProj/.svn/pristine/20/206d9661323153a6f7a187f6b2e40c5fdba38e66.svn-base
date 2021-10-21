@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.professor.lecture.mapper.LectureMapper">
+	<select id="selectLectureList" parameterType="hashMap" resultType="lectureOpenVO">
+		SELECT T.*
+		FROM
+		(
+		SELECT ROW_NUMBER() OVER (ORDER BY LECT_OPEN_NUM DESC) RNUM,
+		PROF_ID, SUBJ_NUM, LECT_OPEN_NUM, LECT_NAME, SEM_CODE, CRED, ROOM_NUM, SYL_NUM, SUBJ_TYPE_CODE, YEAR, UNIV_DEPT_NUM, DIVIDE_NUM, MAX_STD_CNT, STD_CNT, CLOSE_YN, OPEN_YN, APPLY_DATE, PROC_STAT_CODE, DISAURH_RSN, AUTH_DOC_NUM,
+		CONCAT(CONCAT(LECT_TIME1,','), LECT_TIME2) LECT_TIME
+		FROM   
+        (SELECT CONCAT(B.BUILD_CODE,B.ROOM_NUM) ROOM_NUM,A.*
+        FROM LECTURE_OPEN A, LECTURE_ROOM B
+        WHERE A.ROOM_IDN_NUM = B.ROOM_IDN_NUM)ROOM_NUM
+		WHERE 1 = 1
+				<if test="selectYear !='' and selectSemester =='' and searchKeyword ==''">  <!-- selectYear가 선택 -->
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+				</if>
+				<if test="selectSemester !='' and selectYear =='' and searchKeyword ==''">
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+				<if test="searchKeyword !='' and selectSemester =='' and selectYear ==''" >
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+				</if>
+				<if test="selectYear !='' and selectSemester != '' and searchKeyword ==''"> <!-- 년도,학기 -->
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+				<if test="selectYear !='' and searchKeyword != '' and selectSemester ==''"> <!-- 년도, 이름 -->
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+				</if>
+				<if test="selectSemester !='' and searchKeyword != '' and selectYear ==''"> <!-- 학기, 이름 -->
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>		
+				<if test="searchKeyword !='' and selectSemester !='' and selectYear !=''" >
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+		) T
+		WHERE T.RNUM BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+	</select>
+
+
+	<!-- 페이지 갯수 -->
+	<select id="selectCount" parameterType="hashMap" resultType="int">
+	SELECT COUNT(*)
+	FROM
+	(
+	SELECT T.*
+		FROM
+		(
+		SELECT ROW_NUMBER() OVER (ORDER BY LECT_OPEN_NUM DESC) RNUM,
+		PROF_ID, SUBJ_NUM, LECT_OPEN_NUM, LECT_NAME, SEM_CODE, CRED, ROOM_NUM, SYL_NUM, SUBJ_TYPE_CODE, YEAR, UNIV_DEPT_NUM, DIVIDE_NUM, MAX_STD_CNT, STD_CNT, CLOSE_YN, OPEN_YN, APPLY_DATE, PROC_STAT_CODE, DISAURH_RSN, AUTH_DOC_NUM,
+		CONCAT(CONCAT(LECT_TIME1,','), LECT_TIME2) LECT_TIME
+		FROM   
+        (SELECT CONCAT(B.BUILD_CODE,B.ROOM_NUM) ROOM_NUM,A.*
+        FROM LECTURE_OPEN A, LECTURE_ROOM B
+        WHERE A.ROOM_IDN_NUM = B.ROOM_IDN_NUM)ROOM_NUM
+		WHERE 1 = 1
+				<if test="selectYear !='' and selectSemester =='' and searchKeyword ==''">
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+				</if>
+				<if test="selectSemester !='' and selectYear =='' and searchKeyword ==''">
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+				<if test="searchKeyword !='' and selectSemester =='' and selectYear ==''" >
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+				</if>
+				<if test="selectYear !='' and selectSemester != '' and searchKeyword ==''"> <!-- 년도,학기 -->
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+				<if test="selectYear !='' and searchKeyword != '' and selectSemester ==''"> <!-- 년도, 이름 -->
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+				</if>
+				<if test="selectSemester !='' and searchKeyword != '' and selectYear ==''"> <!-- 학기, 이름 -->
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>		
+				<if test="searchKeyword !='' and selectSemester !='' and selectYear !=''" >
+					AND LECT_NAME LIKE '%' || #{searchKeyword} || '%'
+					AND YEAR LIKE '%' || #{selectYear} || '%'
+					AND SEM_CODE LIKE '%' || #{selectSemester} || '%'
+				</if>
+		) T)
+<!-- 		SELECT COUNT(*) -->
+<!-- 		FROM LECTURE_OPEN -->
+	</select>
+
+
+</mapper>

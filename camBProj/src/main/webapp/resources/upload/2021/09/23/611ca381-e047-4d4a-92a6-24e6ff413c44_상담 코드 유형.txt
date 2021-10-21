@@ -1,0 +1,48 @@
+VOL_ACT	지도	01
+VOL_ACT	전문	02
+VOL_ACT	교육	03
+VOL_ACT	노력	04
+VOL_ACT	사무보조	05
+VOL_ACT	상담	06
+VOL_ACT	해외	07
+VOL_ACT	기타	08
+VOL_ACT	장기기증	09
+VOL_ACT	헌혈	10
+VOL_ACT	학교 OT	11
+VOL_ACT	학교수업	12
+
+
+CON_GOA	대인관계		01
+CON_GOA	가족관계		02
+CON_GOA	학업		03
+CON_GOA	진로		04
+CON_GOA	학점		05
+CON_GOA	기타		06
+CON_GOA	과제(보고서)	07
+CON_GOA	장기결석자	08
+
+
+
+CON_TYP		면대면		01
+CON_TYP		온라인		02
+
+
+
+CON_MOT	자진		01
+CON_MOT	교수 추천		02
+CON_MOT	광고		03
+CON_MOT	친구 권유		04
+CON_MOT	학교 당국		05
+CON_MOT	기타		06
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,86 @@
+package kr.or.ddit.admin.univDep.web;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.admin.univDep.service.UnivDepService;
+import kr.or.ddit.admin.univDep.vo.UnivDepVO;
+import kr.or.ddit.admin.univDep.vo.UnivVO;
+
+@Controller
+@RequestMapping(value = "/admin/univDep/*")
+public class UnivDepController {
+	
+	private static Logger logger = LoggerFactory.getLogger(UnivDepController.class);
+	
+	@Autowired
+	UnivDepService univDepService;
+	
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public String selectUnivDepList(@ModelAttribute UnivDepVO univDepVo, Model model) throws Exception {
+		
+//		학과 목록
+		List<UnivDepVO> list = this.univDepService.selectUnivDepList(univDepVo);
+		logger.info("list : "+list);
+		model.addAttribute("list", list);
+		
+//		페이징 처리
+		PaginationInfo pagination = new PaginationInfo();
+		pagination.setCurrentPageNo(univDepVo.getPageNo());
+		pagination.setRecordCountPerPage(univDepVo.getRecordCountPerPage());
+		pagination.setPageSize(univDepVo.getPageSize());
+		pagination.setTotalRecordCount(this.univDepService.totalUnivDep());
+		
+		int lastRecordIndex = pagination.getLastRecordIndex();
+		
+		if(lastRecordIndex > pagination.getTotalRecordCount()) {
+			lastRecordIndex = pagination.getTotalRecordCount();
+		}
+		
+		model.addAttribute("pagination", pagination);
+		model.addAttribute("lastRecordIndex", lastRecordIndex);
+		
+		return "admin/univDep/list";
+	}
+	
+	
+	@RequestMapping(value = "/insert", method = RequestMethod.GET)
+	public String insertUnivDep(Model model) throws Exception {
+		
+//		대학리스트
+		List<UnivVO> univList = this.univDepService.selectUnivList();
+		logger.debug("univList : " + univList);
+		model.addAttribute("univList", univList);
+		
+		return "admin/univDep/insert";
+	}
+	
+	
+	@RequestMapping(value = "insert", method = RequestMethod.POST)
+	public String insertUnivDepPost (@ModelAttribute UnivDepVO univDepVo) throws Exception {
+		
+//		입력받은 학과 정보
+		logger.info("맨 처음의 univDepVO : " + univDepVo.toString());
+		
+//		학과 등록 전 학과 번호 생성 및 VO에 세팅
+		String univDeptNum = this.univDepService.makeUnivDepNum(); 
+		logger.info("만들어진 학과 번호 univDeptNum : " + univDeptNum);
+		univDepVo.setUnivDeptNum(univDeptNum);
+		
+//		학과 등록
+		String univDeptNumResult = this.univDepService.insertUnivDep(univDepVo);
+		logger.info("입력된 학과 번호 univDeptNumResult : " + univDeptNumResult);
+		
+		return "redirect:/admin/unibDep/detail?univDeptNum="+univDeptNumResult;
+	}
+
+}

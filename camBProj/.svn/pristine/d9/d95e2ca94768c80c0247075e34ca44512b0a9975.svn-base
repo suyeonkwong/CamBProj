@@ -1,0 +1,13 @@
+package kr.or.ddit.common.myPage.mapper;
+
+import java.util.List;
+
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.common.login.vo.MemberVO;
+
+@Mapper("myPage")
+public interface MyPageMapper {
+
+	List<MemberVO> myPageList(MemberVO memberVo);
+}

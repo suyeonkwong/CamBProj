@@ -1,0 +1,182 @@
+package kr.or.ddit.util.auth.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.util.auth.mapper.AuthMapper;
+import kr.or.ddit.util.auth.service.AuthService;
+import kr.or.ddit.util.auth.vo.AuthDetailInfoVO;
+import kr.or.ddit.util.auth.vo.AuthDocFormVO;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.auth.vo.AuthLineVO;
+import kr.or.ddit.util.auth.vo.AuthStepVO;
+
+@Service
+public class AuthServiceImpl implements AuthService{
+	
+	@Autowired
+	AuthMapper authMapper;
+	
+	/**
+	 *  AuthLine 결재 라인  
+	 */
+	@Override
+	public List<AuthLineStepVO> authLineList(AuthLineStepVO authLineStepVo) {
+		List<AuthLineStepVO> authLineList = authMapper.authLineList(authLineStepVo);
+		return authLineList;
+	}
+
+	@Override
+	public int authLineTotalCount() {
+		return authMapper.authLineTotalCount();
+	}
+	
+	@Override
+	public List<AuthStepVO> authStepSearch(AuthStepVO authStepVo){
+		return authMapper.authStepSearch(authStepVo);
+	};
+	
+	@Override
+	public int authLineStepInsert(AuthLineStepVO authLineStepVo) {
+		
+		AuthLineVO authLineVo = new AuthLineVO();
+		authLineVo.setAuthLineName(authLineStepVo.getAuthLineName()); // 결재 선 이름
+		authLineVo.setAuthLineTypeCode(authLineStepVo.getAuthLineTypeCode()); // 결재 선 업무 유형
+		authLineVo.setCreator(authLineStepVo.getCreator()); // 결재 선 생성자
+		authMapper.authLineInsert(authLineVo);
+		String authLineNum = authLineVo.getAuthLineNum();
+		
+		String memIdListStr = authLineStepVo.getMemIdList(); // 결재 선 스텝(멤버) 리스트 문자열
+		String[] memIdList = memIdListStr.split("-");
+		System.out.println(">> memIdListStr : " + memIdListStr);
+		System.out.println(">> memIdList : " + memIdList.toString());
+		
+		for(int i=0; i<memIdList.length; i++) {
+			AuthStepVO authStepVo = new AuthStepVO();
+			authStepVo.setAuthLineNum(authLineNum);
+			authStepVo.setMemId(memIdList[i]);
+			authStepVo.setSequence(i+1);
+			
+			int result = authMapper.authStepInsert(authStepVo);
+			if(result <= 0) return 0; // 실패 시 0을 리턴  
+		}
+		return 1;
+	}
+	
+	/**
+	 *  AuthDocForm 결재 문서 양식  
+	 */
+	@Override
+	public AuthDocFormVO authDocFormDetail() {
+		return authMapper.authDocFormDetail();
+	}
+	
+	
+	/**
+	 *  AuthDoc 결재 문서
+	 */
+	@Override
+	public String authDocInsert(String authDocFormNum, String fileGrNum) {
+		
+		AuthDocVO authDocVo = new AuthDocVO();
+		
+		// authDocFormNum에 따라 memId(결재자)에 다른 값이 들어감 
+		String memId = ""; 
+		if("01".equals(authDocFormNum)) {
+			memId = "210301001"; // 직원을 검색해서 올려줘야 함
+		}
+		
+		authDocVo.setMemId(memId);
+		authDocVo.setAuthDocFormNum(authDocFormNum);
+
+		// 첨부 파일 값이 있다면, 파일 그룹 번호도 세팅
+		if(!"".equals(fileGrNum) || fileGrNum != null) {
+			authDocVo.setFileGrNum(fileGrNum);
+		}
+		
+		// insert 작업 후
+		authMapper.authDocInsert(authDocVo);
+		
+		// authDocNum 반환
+		return authDocVo.getAuthDocNum();
+	}
+
+	@Override
+	public List<AuthDocVO> authDocList(AuthDocVO authDocVo) {
+		return authMapper.authDocList(authDocVo);
+	}
+
+	@Override
+	public int authDocTotalCount(AuthDocVO authDocVo) {
+		return authMapper.authDocTotalCount(authDocVo);
+	}
+
+	@Override
+	public AuthDocVO authDocDetail(String authDocNum) {
+		return authMapper.authDocDetail(authDocNum);
+	}
+	
+	/**
+	 * 기안자가 결재 문서 승인한 후, 결재선(결재자 정보)를 등록  
+	 */
+	@Override
+	public int authDocUpdateAndAuthDetailInfoInsert(AuthDocVO authDocVo) {
+		
+		System.out.println(">> serv : " +authDocVo );
+		// 1. 결재 문서를 승인
+		authMapper.authDocUpdate(authDocVo);
+		String authDocNum = authDocVo.getAuthDocNum();
+		String authLineNum = authDocVo.getAuthLineNum(); 
+		
+		int result = authMapper.authDocUpdate(authDocVo);
+		System.out.println(">> result1 authDocVo : " +authDocVo );
+		System.out.println(">> result1 : " +result );
+		
+		if(result <= 0) {
+			return 0;
+		}
+		
+		// 2. 결재자 정보를 등록
+		List<AuthDetailInfoVO> authDetailInfoVoList = new ArrayList<>();
+		List<AuthStepVO> stepList = authMapper.authStepList(authLineNum);
+		for(AuthStepVO authStepVo: stepList) {
+			AuthDetailInfoVO authDetailInfoVo = new AuthDetailInfoVO();
+			authDetailInfoVo.setAuthDocNum(authDocNum);
+			authDetailInfoVo.setAuthLineNum(authLineNum);
+			authDetailInfoVo.setMemId(authStepVo.getMemId());
+			authDetailInfoVo.setProcStatCode("01");
+			authDetailInfoVoList.add(authDetailInfoVo);
+		}
+		result = authMapper.authDetailInfoInsert(authDetailInfoVoList);
+		System.out.println(">> result2 authDetailInfoVoList: " +authDetailInfoVoList );
+		System.out.println(">> result2 : " +result );
+		
+		if(result <= 0) {
+			return 0;
+		}else {
+			return 1;
+		}
+	}
+
+	@Override
+	public int authDetailInfoInsert(List<AuthDetailInfoVO> authDetailInfoVoList) {
+		return authMapper.authDetailInfoInsert(authDetailInfoVoList);
+	}
+
+	@Override
+	public List<AuthDetailInfoVO> authDetailInfoList(String authDocNum) {
+		return authMapper.authDetailInfoList(authDocNum);
+	}
+
+	
+
+
+
+
+	
+}

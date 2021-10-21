@@ -1,0 +1,164 @@
+먼저, egovFrame web project를 생성한다.
+
+생성하면서 generate Example을 선택한다.
+
+실행해보면 샘플 게시판 프로젝트가 생성되어 있다.
+
+
+
+1. 오라클에 테이블 생성
+
+src/main/resources/sampledb.sql 을 선택하고
+
+내용 중 MEMORY를 삭제하고, 대상 오라클 DB에 해당 스크립트를 입력한다.
+
+
+
+2. 접속정보 수정
+
+src/main/resources/egovframework/spring/context-datasource.xml
+
+HSQL부분을 주석처리하고 하단 ORACLE부분 주석을 풀고 맞는 내용을 입력한다.
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+        <property name="username" value="아이디"/>
+        <property name="password" value="비번"/>
+    </bean>
+
+
+
+3. 오라클 드라이버 library 입력(생략 가능)
+
+ojdbc14.jar파일을 WEB-INF/lib 하위에 넣는다.
+
+
+
+4. pom.xml 수정
+
+<!-- mysql이나 oracle 필요시 사용 --> 으로 되어있는 곳을 주석을 해제한다.
+
+<dependency>
+            <groupId>com.googlecode.log4jdbc</groupId>
+            <artifactId>log4jdbc</artifactId>
+            <version>1.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+  
+       
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
+       
+       <!--
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.31</version>
+        </dependency>
+   
+        <dependency>
+            <groupId>ojdbc</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>14</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc14.jar</systemPath>
+        </dependency>
+
+        -->
+
+
+
+        <!-- https://mvnrepository.com/artifact/oracle/ojdbc6 -->
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3</version>
+        </dependency>
+
+
+
+5. HSQL에 맞는 쿼리로 되어있는 쿼리 파일을 오라클에 맞게 수정한다.
+
+ src/main/resources/sqlmap/example/sample/EgovSample_Sample_SQL_oracle.xml (파일 추가)
+
+ src/main/resources/sqlmap/example/sql-map-config.xml 수정
+
+=> <sqlMap resource="egovframework/sqlmap/example/sample/EgovSample_Sample_SQL_oracle.xml"/>
+
+
+
+
+
+6. log4j2.xml설정(쿼리 위조로 나오게 하기)
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+<Appenders>
+<Console name="console" target="SYSTEM_OUT">
+<PatternLayout pattern="%d %5p [%c] %m%n" />
+</Console>
+</Appenders>
+<Loggers>
+<Logger name="egovframework" level="DEBUG" additivity="false">
+<AppenderRef ref="console" />
+</Logger>
+<!-- log SQL with timing information, post execution -->
+<logger name="jdbc.sqltiming" level="INFO" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<logger name="org.springframework" level="INFO" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<logger name="java.sql.Connection" level="DEBUG" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<logger name="java.sql.Statement" level="DEBUG" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<logger name="java.sql.PreparedStatement" level="DEBUG" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<logger name="java.sql.ResultSet" level="DEBUG" additivity="false">
+<appender-ref ref="console" />
+</logger>
+<Root level="ERROR">
+<AppenderRef ref="console" />
+</Root>
+</Loggers>
+</Configuration>
+
+
+
+
+
+7. 패키지 분리-소스분리(패키지 분기 시 해당 분기 경로를 추가해야 xml사용 가능)
+
+<!-- SqlSession setup for MyBatis Database Layer -->
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+<property name="dataSource" ref="dataSource" />
+<property name="configLocation" value="classpath:/egovframework/sqlmap/example/sql-mapper-config.xml" />
+<!--  <property name="mapperLocations" value="classpath:/egovframework/sqlmap/example/mappers/*.xml" /> -->
+<property name="mapperLocations">
+<list>
+<value>classpath:/egovframework/sqlmap/example/mappers/*.xml</value>
+<value>classpath:/egovframework/sqlmap/ddit/**/*.xml</value>
+</list>
+</property>
+</bean>
+
+
+
+8. 패키지 분리한 부분 적용
+
+//context-common.xml - 패키지 분리한 부분 적용
+
+<context:component-scan base-package="egovframework, nsi">

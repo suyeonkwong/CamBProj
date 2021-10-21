@@ -1,0 +1,83 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<body>
+
+	<h1 class="h3 mb-2 text-gray-800">사용자 등록</h1>
+	
+	<p class="mb-4">
+		회원 유형을 먼저 선택해주세요 
+	</p>
+	
+	<div class="card shadow mb-4">
+	
+		<div class="card-header py-3">
+			<h6 class="m-0 font-weight-bold text-primary">사용자 등록</h6>
+		</div>
+		
+		<div class="card-body">
+			<div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+				
+				<form action="/admin/member/insert" method="post" enctype="multipart/form-data"><!-- form start -->
+				
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>회원유형</label>
+								<select class="form-control" style="width: 100%;" name="memTypeCode">
+									<option value="admin" selected="selected">admin</option>
+									<option value="professor">professor</option>
+									<option value="student">student</option>
+								</select>
+							</div>
+						</div>
+					</div>	
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="name">이름</label>
+								<input type="text" class="form-control" name="name" id="name" placeholder="이름을 입력하세요">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="resRgstNum">주민등록번호</label>
+								<input type="text" class="form-control" name="resRgstNum" id="resRgstNum" placeholder="숫자만 입력하세요">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>성별</label>
+								<select class="form-control" style="width: 100%;" name="gen">
+									<option value="M" selected="selected">남</option>
+									<option value="F">여</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="phNum">전화번호</label>
+								<input type="tel" class="form-control" name="phNum" id="phNum" placeholder="숫자만 입력하세요">
+							</div>
+						</div>
+					</div>
+
+					<hr>
+					
+					<div class="row">
+						<div class="col-sm-12 text-right">
+							<button type="submit" class="btn btn-primary" id="btnSubmit">등록</button>
+							<button type="button" class="btn btn-light" onclick="location.href='/admin/member/list'">취소</button>
+						</div>
+					</div>
+							
+				</form><!-- // form end -->
+						
+			</div>
+		</div>
+		
+	</div>
+	
+</body>
+</html>

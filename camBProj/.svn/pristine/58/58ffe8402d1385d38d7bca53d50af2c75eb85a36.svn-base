@@ -1,0 +1,22 @@
+package kr.or.ddit.student.takeOff.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+
+@Mapper("takeOffMapper")
+public interface TakeOffMapper {
+	
+	List<TakeOffVO> list(Map<String, Object> map);
+	
+	int totalCount();
+	
+	TakeOffVO detail(String takeOffApplyNum);
+	
+	int apply(TakeOffVO takeOffVo);
+	
+	int update(TakeOffVO takeOffVo);
+	
+}

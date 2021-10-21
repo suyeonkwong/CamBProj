@@ -1,0 +1,29 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+
+  <div id="formContent">
+      <img src="/resources/img/camblogo.png" id="icon" alt="logo" />
+
+    <!-- 로그인 -->
+    <form action="/login" method="post" name="login">
+      <input type="text" id="login" name="memId" placeholder="id">
+      <input type="password" id="pwd" name="pwd" placeholder="password">
+      <input type="submit"  value="LogIn">
+    </form>
+
+    <!-- 비번 -->
+      <a href="#">비밀번호 찾기</a>
+
+  </div>
+
+<c:set var="msg" value="${msg}" />
+
+<c:if test="${msg eq 'fail'}">
+		console.log("실패")
+    <script>
+    	alert("비밀번호가 일치하지 않습니다.")
+    </script>
+
+</c:if>

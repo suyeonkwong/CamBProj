@@ -1,0 +1,15 @@
+package kr.or.ddit.student.consult.service;
+
+import java.util.List;
+
+import kr.or.ddit.student.consult.vo.ConsultScheduleVO;
+import kr.or.ddit.student.consult.vo.ConsultVO;
+
+public interface ConsultService {
+
+	//교수들 상담 스케줄 검색
+	List<ConsultScheduleVO> selectConsultSchedule();
+	//상담신청
+	int insertConsult(ConsultVO consultVo);
+
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.util.code.mapper.CodeMapper">
+	
+	<select id="codeList" parameterType="String" resultType="kr.or.ddit.util.code.vo.CodeVO">
+		<![CDATA[
+			SELECT p.code_type, p.code_type_name, c.code_name, c.code_val
+			FROM   code_type p, code c
+			WHERE  p.code_type = c.code_type
+	        AND    p.code_type = #{codeType}
+        ]]>
+	</select>
+	
+</mapper>

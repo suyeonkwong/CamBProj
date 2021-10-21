@@ -1,0 +1,32 @@
+package kr.or.ddit.util.auth.vo;
+
+public class AuthStepVO {
+	
+	private String authLineNum;
+	private String memId;
+	private int sequence;
+	
+	public String getAuthLineNum() {
+		return authLineNum;
+	}
+	public void setAuthLineNum(String authLineNum) {
+		this.authLineNum = authLineNum;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public int getSequence() {
+		return sequence;
+	}
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
+	}
+	@Override
+	public String toString() {
+		return "AuthStepVO [authLineNum=" + authLineNum + ", memId=" + memId + ", sequence=" + sequence + "]";
+	}
+	
+}

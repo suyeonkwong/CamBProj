@@ -1,0 +1,30 @@
+package kr.or.ddit.professor.lecture.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.professor.lecture.mapper.LectureMapper;
+import kr.or.ddit.professor.lecture.service.LectureService;
+import kr.or.ddit.professor.lecture.vo.LectureOpenVO;
+import kr.or.ddit.student.volunteer.vo.VolunteerVO;
+
+@Service
+public class LectureServiceImpl implements LectureService{
+
+	@Autowired
+	LectureMapper lectureMapper;
+	
+	@Override
+	public List<LectureOpenVO> selectLectureList(Map<String, Object> map){
+		return this.lectureMapper.selectLectureList(map);
+	}
+	
+	@Override
+	public int selectCount(Map<String, Object> map) {
+		return this.lectureMapper.selectCount(map);
+	}
+	
+}

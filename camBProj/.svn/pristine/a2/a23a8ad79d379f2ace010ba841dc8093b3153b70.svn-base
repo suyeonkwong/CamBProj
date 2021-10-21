@@ -1,0 +1,16 @@
+package kr.or.ddit.student.readingRoom.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping(value="/student/readingRoom/*")
+public class ReadingRoomController {
+	
+	@RequestMapping(value="/readingRoomLookup")
+	public String readingRoomLookup() {
+		
+		return "student/readingRoom/readingRoomLookUp";
+	}
+	
+}

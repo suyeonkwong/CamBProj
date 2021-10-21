@@ -1,0 +1,33 @@
+package kr.or.ddit.student.takeOff.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+import kr.or.ddit.util.file.controller.FileController;
+
+@Controller
+@RequestMapping("/student/takeOff/*")
+public class TakeOffController {
+	
+	@Autowired
+	FileController fileController;
+	
+	@RequestMapping(value = "/takeOffApply", method = RequestMethod.GET)
+	public String insert() {
+		return "student/takeOff/insert";
+	}
+
+	@RequestMapping(value = "/takeOffApply", method = RequestMethod.POST)
+	public String insertPost(@ModelAttribute TakeOffVO takeOffVo) {
+		
+		String fileGrNum = fileController.fileUpload(takeOffVo.getFileList());
+		System.out.println("file fileGrNum : " + fileGrNum);
+		
+		return "student/takeOff/insert";
+	}
+	
+}

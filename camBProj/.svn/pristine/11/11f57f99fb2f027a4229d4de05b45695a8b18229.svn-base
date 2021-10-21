@@ -1,0 +1,27 @@
+package kr.or.ddit.student.tuitionPayment.controller;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Controller;
+
+/**
+ * 등록금 납부 기록
+ * @author PC-08
+ */
+@Controller
+public class TuitionPaymentRecodeController {
+	
+	
+	/**
+	 * 등록금 납부되었으면 업데이트 - 
+	 * - 원래 은행에서 응답이 와서 그 값을 확인하고 처리해주면 되는데, 그렇게 못하니까 흉내만 내기
+	 * 1. 사용자가 입금액 입력 후 입금완료 버튼을 클릭
+	 * 2. 가상계좌번호와 입금액 데이터를 받아서 처리하기
+	 * 3.1. 완납일 경우 : 완납처리. rgst_sem + 1 해주기 
+	 * 3.2. 미납일 경우 : 미납처리. 
+	 * 3.3. 과납일 경우 : 환불 알림-이자처리-환불처리 - 환불 완료 후 완납처리 
+	 */
+	@Scheduled(cron = "0 * * * * *") // 1분 주기
+	public void tuitionPaymentUpdate() {
+//		tuitionPaymentService.tuitionPaymentUpdate();
+	}
+}

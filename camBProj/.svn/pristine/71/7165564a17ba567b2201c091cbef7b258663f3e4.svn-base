@@ -1,0 +1,16 @@
+package kr.or.ddit.professor.lecture.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.professor.lecture.vo.LectureOpenVO;
+
+public interface LectureService {
+
+	public List<LectureOpenVO> selectLectureList(Map<String, Object> map);
+
+	public int selectCount(Map<String, Object> map);
+
+
+
+}

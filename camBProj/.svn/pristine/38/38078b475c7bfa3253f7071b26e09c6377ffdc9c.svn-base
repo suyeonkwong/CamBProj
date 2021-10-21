@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.ddit.common.notice.mapper.NoticeMapper">
+
+	<!-- 전체조회 -->
+	<select id="noticeList" parameterType="String" resultType="kr.or.ddit.common.notice.vo.NoticeVO">
+		SELECT * 
+			FROM (SELECT ROW_NUMBER() OVER (ORDER BY ARTC_NUM DESC) rnum
+				,ARTC_NUM
+				,EMP_ID
+				,TITLE
+				,CONTENT
+				,WRITE_DATE
+				,FILE_GR_NUM
+				,MOD_DATE
+				FROM GENERAL_NOTICE
+				    ) t
+			WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+		</select>
+		
+		<select id="selectCnt" resultType="int">
+			SELECT COUNT(*)
+            FROM GENERAL_NOTICE
+		</select>
+	<!-- 등록 -->
+	<insert id="noticeInsert" parameterType="NoticeVO">
+		<selectKey keyProperty="artcNum" order="BEFORE" resultType="String">
+			SELECT NVL(MAX(ARTC_NUM),0)+1 FROM GENERAL_NOTICE
+		</selectKey>
+		INSERT INTO GENERAL_NOTICE
+		(
+		ARTC_NUM
+		, EMPID
+		, TITLE
+		, CONTENT
+		, WRITE_DATE
+		, FILE_GR_NUM
+		, MOD_DATE)
+		VALUES 
+		(
+		#{artcNum}
+		, #{empId}
+		, #{title}
+		, #{content}
+		, sysdate
+		, #{fileGrNum}
+		, #{modDate}
+		)
+
+	</insert>
+	
+	
+	
+	
+	
+	
+	<!-- 상세보기 -->
+<!-- 	<select id="detail" parameterType="String"
+		resultMap="allNoticeMap">
+		SELECT ARTC_NUM, EMP_ID, TITLE, CONTENT, WRITE_DATE, FILE_GR_NUM, MOD_DATE
+		FROM GENERAL_NOTICE
+		WHERE ARTC_NUM = #{artcNum} 
+	</select> -->
+
+
+	<!-- 수정  -->
+<!-- 	<update id="update">
+		UPDATE GENERAL_NOTICE
+		SET EMP_ID = #{empId}, TITLE =
+		#{title}, CONTENT= #{content}, WRITE_DATE = #{write_date},
+		FILE_GR_NUM = #{fileGrNum}
+		WHERE ARTC_NUM = #{artcNum}
+	</update> -->
+
+</mapper>

@@ -1,0 +1,63 @@
+package kr.or.ddit.admin.member.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.admin.member.mapper.MemberMapper;
+import kr.or.ddit.admin.member.service.MemberService;
+import kr.or.ddit.admin.member.vo.MemberVO;
+
+@Service
+public class MemberServiceImpl implements MemberService{
+	
+	@Autowired
+	private MemberMapper memberMapper;
+
+//	멤버 목록
+	@Override
+	public List<MemberVO> selectMemberList(MemberVO memberVo) throws Exception {
+		return this.memberMapper.selectMemberList(memberVo);
+	}
+	
+//	멤버 인원 수
+	@Override
+	public int totalMember(MemberVO memberVo) throws Exception {
+		return this.memberMapper.totalMember(memberVo);
+	}
+
+//	멤버 등록
+	@Override
+	public String insertMember(MemberVO memberVo) throws Exception {
+		
+		int affectedRowCnt = this.memberMapper.insertMember(memberVo);
+		if(affectedRowCnt > 0) {	//insert 성공
+			return memberVo.getMemId();	//회원 번호를 리턴
+		}else {	//insert 실패 시 0 리턴
+			return null;
+		}
+	}
+
+//	멤버 상세
+	@Override
+	public MemberVO detailMember(String memId) throws Exception {
+		return this.memberMapper.detailMember(memId);
+	}
+
+//	멤버 수정
+	@Override
+	public int updateMember(MemberVO memberVo) throws Exception{
+		return this.memberMapper.updateMember(memberVo);
+	}
+
+//	멤버 삭제
+	@Override
+	public int deleteMember(MemberVO memberVo) throws Exception {
+		return this.memberMapper.deleteMember(memberVo);
+	}
+
+	
+	
+}

@@ -1,0 +1,43 @@
+package kr.or.ddit.admin.member.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.admin.member.vo.MemberVO;
+import kr.or.ddit.admin.member.vo.ProfessorVO;
+import kr.or.ddit.admin.member.vo.StudentVO;
+import kr.or.ddit.admin.member.vo.VCodeVO;
+
+public interface MemberService {
+
+//	멤버 목록
+	public List<MemberVO> selectMemberList(MemberVO memberVo) throws Exception;
+	
+//	멤버 인원 수
+	public int totalMember(MemberVO memberVo) throws Exception;
+	
+//	학과목록
+	public List<VCodeVO> selectUnivDepList() throws Exception;
+	
+//	지도교수목록
+	public List<MemberVO> selectAdvProfList(String codeVal) throws Exception;
+	 
+//	멤버 등록
+	public String insertMember(MemberVO memberVo) throws Exception;
+	
+//	학생등록
+	public String insertStudent(StudentVO studentVo);
+	
+//	교수등록
+	public String insertProfessor(ProfessorVO professorVo);
+	
+//	멤버상세
+	public MemberVO detailMember(String memId) throws Exception;
+	
+//	멤버수정
+	public int updateMember(MemberVO memberVo) throws Exception;
+	
+//	멤버 삭제
+	public int deleteMember(MemberVO memberVo) throws Exception;
+	
+}

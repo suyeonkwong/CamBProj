@@ -1,0 +1,205 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<style>
+	table {
+		width: 800px; border-collapse: collapse; border: 1px solid black;
+		color: black; background: white; 
+	}
+	
+	tr, td {
+		border-collapse: collapse; border: 1px solid black;
+	}
+	
+	#title {
+		padding: 3px; border: 1px solid black; height: 90px !important; font-size: 27px; font-weight: bold; text-align: center; vertical-align: middle;
+		background: #F5F5F5;
+	}
+	
+	.item1 {
+		padding: 3px; height: 20px; vertical-align: middle; border: 1px solid black; text-align: center; font-weight: bold;
+		background: #F5F5F5;
+	}
+	
+	.val1{
+		padding: 3px; height: 20px; vertical-align: middle; border: 1px solid black; text-align: left;
+	}
+	
+	#tdContent {
+		padding: 3px; vertical-align: top; border: 0px solid black;
+	}
+
+</style>
+
+<div id="body">
+
+	<div class="text-center">
+		<!-- 문서 헤더 시작-->
+
+		<table>
+			<colgroup>
+				<col style="width: 90px;">
+				<col style="width: 180px;">
+				<col style="width: 90px;">
+				<col style="width: 120px;">
+				<col style="width: 90px;">
+				<col style="">
+			</colgroup>
+
+			<tbody>
+				<tr>
+					<td id="title" colspan="6">
+						휴 학 신 청 
+					</td>
+				</tr>
+				<tr>
+					<td class="item1"> 
+						기안부서
+					</td>
+					<td class="val1">
+						학사관리 부
+					</td>
+					<td class="item1">
+						수신 일자
+					</td>
+					<td class="val1">
+						${authDocVo.rcpDate}
+					</td>
+					<td class="item1">
+						문서 번호
+					</td>
+					<td class="val1">
+						${authDocVo.authDocNum}
+					</td>
+				</tr>
+				<tr>
+					<td class="item1">
+						기 안 자 
+					</td>
+					<td class="val1">
+						${authDocVo.memId} 
+					</td>
+					<td class="item1">
+						수신
+					</td>
+					<td class="val1">
+						${authDocVo.rcpCode} 
+					</td>
+					<td class="item1">
+						결재 상태
+					</td>
+					<td class="val1">
+						${authDocVo.authStatCode}
+					</td>
+				</tr>
+			</tbody>
+		</table> <!-- // 문서 헤더 끝-->
+		
+		<!-- 제목 및 내용 시작 -->
+		<table>
+			<colgroup>
+				<col style="width: 90px;">
+				<col style="width: 710px;">
+			</colgroup>
+
+			<tbody>
+				<tr> <!-- class="dext_table_border_t dext_table_border_r dext_table_border_b dext_table_border_l" -->
+					<td id="tdContent" colspan="2">
+						<br>
+						<table style="width: 770px; margin: 9px; border-collapse: collapse !important; color: black; background: white; border: 2px solid black">
+							<colgroup>
+								<col style="width: 100px;">
+								<col style="width: 285px;">
+								<col style="width: 100px;">
+								<col style="width: 285px;">
+							</colgroup>
+
+							<tbody>
+								<tr>
+									<td class="item1">
+										학과 
+									</td>
+									<td class="val1"> 	
+										국어 국문 학과
+									</td>
+									<td class="item1">
+										학기/성명
+									</td>
+									<td class="val1">
+										5학기 / 오수연
+									</td>
+								</tr>
+								<tr>
+									<td class="item1">
+										학번
+									</td>
+									<td class="val1">
+										123456
+									</td>
+									<td class="item1">
+										연락처
+									</td>
+									<td class="val1">
+										010-4569-1234
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+
+						<table id="currencyTable" style="width: 770px; margin: 9px; border-collapse: collapse !important; color: black; background: white; border: 2px solid black;">
+							<colgroup>
+								<col style="width: 120px;">
+								<col style="width: 120px;">
+								<col style="width: 530px;">
+							</colgroup>
+
+							<tbody>
+								<tr>
+									<td style="padding: 3px; height: 99px; vertical-align: middle; border: 1px solid black; text-align: center; font-weight: bold;" colspan="3">
+										위와 같이 21 학년도 제 2학기 휴학을 신청합니다.
+									</td>
+								</tr>
+								<tr>
+									<td class="item1" rowspan="3">
+										내용
+									</td>
+									<td class="item1">
+										휴학 시작 학기
+									</td>
+									<td class="val1">
+										2021-2학기
+									</td>
+								</tr>
+								<tr>
+									<td class="item1">
+										휴학 종료 학기
+									</td>
+									<td class="val1">
+										2022-2학기
+									</td>
+								</tr>
+								<tr>
+									<td class="item1">
+										휴직 사유
+									</td>
+									<td class="val1">
+										<input type="radio" id="cb1" name="takeOffTypeCode" value=""/>
+										<label for="cb1">개인 사유</label>
+										<input type="radio" id="cb2" name="takeOffTypeCode" value=""/>
+										<label for="cb2">병가</label>
+										<input type="radio" id="cb3" name="takeOffTypeCode" value=""/>
+										<label for="cb3">군입대</label>
+										<input type="radio" id="cb4" name="takeOffTypeCode" value=""/>
+										<label for="cb4">창업</label>
+									</td>
+								</tr>
+							</tbody>
+						</table> <br>
+					</td>
+				</tr>
+			</tbody>
+		</table> <!-- 제목 및 내용 끝 --> 
+	</div>
+</div>

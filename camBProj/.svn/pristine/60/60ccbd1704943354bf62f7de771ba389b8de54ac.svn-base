@@ -1,0 +1,42 @@
+package kr.or.ddit.student.registrationLecture.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class RegistrationLectureController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationLectureController.class);
+	
+	/**
+	 * 수강 신청 할 수 있는 강의 목록
+	 * - 장바구니, 신청 완료 강의 목록도 약식으로 보여줌
+	 * @return
+	 */
+	@RequestMapping("/student/registrationLecture/registrationLectureList")
+	public String registrationLectureList() {
+		return "student/registrationLecture/registrationLectureList";
+	}
+	
+	/**
+	 * 장바구니에 담은 강의 목록
+	 * @return
+	 */
+	@RequestMapping("/student/registrationLecture/registrationLectureCartList")
+	public String registrationLectureCartList() {
+		return "student/registrationLecture/registrationLectureCartList";
+	}
+	
+	/**
+	 * 신청 완료한 강의 목록
+	 * @return
+	 */
+	@RequestMapping("/student/registrationLecture/registrationLectureApplyList")
+	public String registrationLectureApplyList() {
+		return "student/registrationLecture/registrationLectureApplyList";
+	}
+	
+	
+}

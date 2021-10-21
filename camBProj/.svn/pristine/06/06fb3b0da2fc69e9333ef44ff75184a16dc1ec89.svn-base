@@ -1,0 +1,11 @@
+package kr.or.ddit.student.volunteer.service;
+
+import java.util.List;
+
+import kr.or.ddit.student.volunteer.vo.VolunteerVO;
+
+public interface VolunteerService {
+
+	List<VolunteerVO> volunteerAllList();
+
+}

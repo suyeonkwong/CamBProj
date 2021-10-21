@@ -1,0 +1,22 @@
+package kr.or.ddit.common.myPage.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.login.vo.MemberVO;
+import kr.or.ddit.common.myPage.mapper.MyPageMapper;
+import kr.or.ddit.common.myPage.service.MyPageService;
+
+@Service
+public class MyPageServiceImpl implements MyPageService {
+	@Autowired
+	private MyPageMapper myPageMapper;
+	
+	@Override
+	public List<MemberVO> myPageList(MemberVO memberVo) {
+		return this.myPageMapper.myPageList(memberVo);
+	}
+
+}

@@ -1,0 +1,104 @@
+package kr.or.ddit.util.auth.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.util.auth.service.AuthService;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.code.service.CodeService;
+import kr.or.ddit.util.code.vo.CodeVO;
+
+@Controller
+@RequestMapping("/auth")
+public class AuthLineController {
+	
+	@Autowired
+	AuthService authService;
+	@Autowired
+	CodeService codeService; // 공통 코드 처리 용
+	
+	
+	/**
+	 * 결재 선 리스트
+	 * @param map : pageNum
+	 * @return 리스트 목록
+	 */
+	@RequestMapping(value = "/authLineList", method = RequestMethod.GET)
+	public String authLineList(@RequestParam Map<String, Object> map, Model model) {
+		
+		if(!map.containsKey("pageNo")) map.put("pageNo", "1");
+		
+		List<AuthLineStepVO> authLineList = authService.authLineList(map);
+		model.addAttribute("authLineList", authLineList);
+		System.out.println("**** authLineList : " + authLineList);
+		
+		// 페이징 처리
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(Integer.parseInt(String.valueOf(map.get("pageNo"))));
+		paginationInfo.setRecordCountPerPage(5);
+		paginationInfo.setPageSize(5);
+		paginationInfo.setTotalRecordCount(authService.authLineTotalCount());
+		model.addAttribute("paginationInfo", paginationInfo);
+		
+		return "auth/authLine/authLineList";
+	}
+	
+	/**
+	 * 결재 선 생성
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/authLineStepInsert", method = RequestMethod.GET)
+	public String authLineInsert(Model model) {
+		List<CodeVO> codeList = codeService.codeList("AUT_LIN");
+		model.addAttribute("codeList", codeList);
+		
+		return "auth/authLine/authLineStepInsert";
+	}
+	
+	/**
+	 * 결재 스텝 생성 위한 교직원 검색 팝업
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/authStepSearchPopup", method = RequestMethod.GET)
+	public String authStepSearchPopup(@RequestParam Map<String, Object> map, Model model) {
+		
+		if(!map.containsKey("pageNo")) map.put("pageNo", "1");
+		List<Map<String, Object>> authStep = authService.authStepSearch(map);
+		model.addAttribute("authStep", authStep);
+		return "auth/authLine/popup/authStepSearchPopup";
+	}
+	
+
+	@RequestMapping(value = "/authLineStepInsert", method = RequestMethod.POST)
+	public String authLineInsertPost(@ModelAttribute AuthLineStepVO authLineStepVo) {
+		authService.authLineStepInsert(authLineStepVo);
+		return "redirect:/auth/authLineList";
+	}
+	
+	@RequestMapping(value = "/authLineUpdate", method = RequestMethod.GET)
+	public String authLineUpdate() {
+		return "auth/authLine/popup/authLineUpdate";
+	}
+
+	@RequestMapping(value = "/authLineUpdate", method = RequestMethod.POST)
+	public String authLineUpdatePost() {
+		return "redirect:/auth/authLineList";
+	}
+
+	@RequestMapping(value = "/authLineDelete", method = RequestMethod.POST)
+	public String authLineDelete() {
+		return "redirect:/auth/authLineList";
+	}
+	
+}

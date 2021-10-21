@@ -1,0 +1,45 @@
+package kr.or.ddit.student.dorm.controller;
+
+import java.util.List;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.student.dorm.service.DormService;
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+import kr.or.ddit.util.code.service.CodeService;
+import kr.or.ddit.util.code.vo.CodeVO;
+
+@Controller
+@RequestMapping("/student/dorm/*")
+public class DormController {
+	
+	Logger logger = LoggerFactory.getLogger(DormController.class);
+	
+	@Autowired
+	private DormService dormService;
+	
+	@Autowired
+	private CodeService codeService;
+	
+	//생활관 신청 양식
+	@RequestMapping(value="/dormApply")
+	public String dormApllyForm(Model model) {
+		
+		//코드명을 가져오기 위함.
+		List<CodeVO> codeList = this.codeService.codeList("BUI_DOR");
+		model.addAttribute("codeList", codeList);
+		
+		//건물코드 가져오기
+//		List<DormRoomVO> buildCode = this.dormService.selectBuildCode();
+//		model.addAttribute("buildCode", buildCode);
+		
+		return "student/dorm/dormApply";
+	}
+
+}

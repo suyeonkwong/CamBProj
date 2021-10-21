@@ -1,0 +1,45 @@
+package kr.or.ddit.util.file.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.util.file.mapper.FileMapper;
+import kr.or.ddit.util.file.service.FileService;
+import kr.or.ddit.util.file.vo.AttachFileGroupVO;
+import kr.or.ddit.util.file.vo.AttachFileVO;
+	
+@Service
+public class FileServiceImpl implements FileService{
+
+	@Autowired 
+	FileMapper fileMapper;
+	
+	@Override
+	public int insert(AttachFileGroupVO attachFileGroupVo, List<AttachFileVO> attachFileVoList) {
+		
+		int result = fileMapper.insertFileGroup(attachFileGroupVo);
+		
+		if(result < 0) {
+			return 0; // 실패 시 0 
+		}
+
+		for(AttachFileVO attachFileVo : attachFileVoList) {
+			System.out.println("service >> attachFileVo" + attachFileVo);
+			result = fileMapper.insertFile(attachFileVo);
+			if(result < 0) { // 한 건이라도 실패 시 0
+				return 0;
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<AttachFileVO> fileList(String fileGrNum) {
+		return fileMapper.fileList(fileGrNum);
+	}
+
+
+}

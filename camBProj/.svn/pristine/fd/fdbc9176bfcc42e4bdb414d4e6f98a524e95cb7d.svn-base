@@ -1,0 +1,53 @@
+package kr.or.ddit.util.auth.mapper;
+
+import java.util.List;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.util.auth.vo.AuthDetailInfoVO;
+import kr.or.ddit.util.auth.vo.AuthDocFormVO;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.auth.vo.AuthLineVO;
+import kr.or.ddit.util.auth.vo.AuthStepVO;
+
+@Mapper("authMapper")
+public interface AuthMapper {
+	
+	/**
+	 *  AuthLine 결재 라인  
+	 */
+	List<AuthLineStepVO> authLineList(AuthLineStepVO authLineStepVo);
+	
+	int authLineTotalCount();
+	
+	List<AuthStepVO> authStepSearch(AuthStepVO authStepVo);
+	
+	List<AuthStepVO> authStepList(String authLineNum);
+	
+	int authLineInsert(AuthLineVO authLineVo);
+	
+	int authStepInsert(AuthStepVO authStepVo);
+	
+	/**
+	 *  AuthDocForm 결재 문서 양식  
+	 */
+	AuthDocFormVO authDocFormDetail();
+	
+	
+	/**
+	 *  AuthDoc 결재 문서
+	 */
+	int authDocInsert(AuthDocVO authDocVo);
+	
+	List<AuthDocVO> authDocList(AuthDocVO authDocVo);
+	
+	int authDocTotalCount(AuthDocVO authDocVo);
+	
+	AuthDocVO authDocDetail(String authDocNum);
+	
+	int authDocUpdate(AuthDocVO authDocVo);
+	
+	int authDetailInfoInsert(List<AuthDetailInfoVO> authDetailInfoVoList);
+	
+	List<AuthDetailInfoVO> authDetailInfoList(String authDocNum);
+}

@@ -1,0 +1,32 @@
+package kr.or.ddit.util.auth.vo;
+
+public class AuthDocFormVO {
+	
+	private String authDocFormNum;
+	private String authDocFormName;
+	private String authDocFormPath;
+	public String getAuthDocFormNum() {
+		return authDocFormNum;
+	}
+	public void setAuthDocFormNum(String authDocFormNum) {
+		this.authDocFormNum = authDocFormNum;
+	}
+	public String getAuthDocFormName() {
+		return authDocFormName;
+	}
+	public void setAuthDocFormName(String authDocFormName) {
+		this.authDocFormName = authDocFormName;
+	}
+	public String getAuthDocForm() {
+		return authDocFormPath;
+	}
+	public void setAuthDocForm(String authDocForm) {
+		this.authDocFormPath = authDocForm;
+	}
+	@Override
+	public String toString() {
+		return "AuthDocFormVO [authDocFormNum=" + authDocFormNum + ", authDocFormName=" + authDocFormName
+				+ ", authDocFormPath=" + authDocFormPath + "]";
+	}
+	
+}

@@ -1,0 +1,22 @@
+package kr.or.ddit.student.consult.mapper;
+
+import java.util.List;
+
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.consult.vo.ConsultScheduleVO;
+import kr.or.ddit.student.consult.vo.ConsultVO;
+
+@Mapper("consultMapper")
+public interface ConsultMapper {
+	//상담스케줄 화인, 상담원 예약
+	List<ConsultScheduleVO> selectConsultSchedule();
+	//상담신청
+	int insertConsult(ConsultVO consultVo);
+	//상담신청 내역 리스트
+	List<ConsultVO> selectConsult();
+	//상담신청 상세 내역
+	ConsultVO consultDetailList(String consultNum);
+	//상담예약 취소
+	int deleteConsult(String num);
+}

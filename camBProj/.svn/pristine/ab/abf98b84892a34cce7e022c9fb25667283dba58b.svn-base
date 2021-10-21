@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.volunteer.mapper.VolunteerMapper">
+	<!-- 전체 -->
+	<select id="volunteerAllList" resultType="volunteerVO">
+		SELECT ROW_NUMBER() OVER (ORDER BY VOL_NUM DESC) RNUM, VOL_NUM, INS_NAME ,VOL_RECOG_TIME ,START_DATE ,END_DATE ,VOL_ACT_CONTENT
+		,VOL_ACT_CODE ,STD_ID ,SEM_CODE ,APPLY_DATE ,PROC_STAT_CODE ,DISAUTH_RSN
+		,FILE_GR_NUM ,YEAR ,AUTH_DOC_NUM
+		FROM VOLUNTEER
+	</select>
+	
+	<!-- 신규신청 -->
+	<insert id="insertVolunteer" parameterType="volunteerVO">
+		<selectKey keyProperty="volNum" order="BEFORE" resultType="String">
+			SELECT NVL(MAX(VOL_NUM),0)+1 FROM VOLUNTEER
+		</selectKey>
+		INSERT INTO VOLUNTEER(VOL_NUM, START_DATE, END_DATE, VOL_RECOG_TIME,
+							  VOL_ACT_CODE, INS_NAME, VOL_ACT_CONTENT, PROC_STAT_CODE, DISAUTH_RSN, FILE_GR_NUM,
+							  APPLY_DATE)
+		VALUES (#{volNum}, #{startDate}, #{endDate}, #{volRecogTime},
+			    #{volActCode}, #{insName}, #{volActContenT},
+			    #{procStatCode}, #{disauthRsn}, #{fileGrNum}, sysdate)
+	</insert>
+	
+	<!-- 상세 -->
+	<select id="volunteerDetailList" parameterType="String" resultType="VolunteerVO">
+		SELECT VOL_NUM, INS_NAME ,VOL_RECOG_TIME ,START_DATE ,END_DATE ,VOL_ACT_CONTENT
+		,VOL_ACT_CODE ,STD_ID ,SEM_CODE ,APPLY_DATE ,PROC_STAT_CODE ,DISAUTH_RSN
+		,FILE_GR_NUM ,YEAR ,AUTH_DOC_NUM
+		FROM VOLUNTEER
+		WHERE VOL_NUM = #{volNum}
+	</select>
+	
+	<!-- 삭제 -->
+	<delete id="deleteVolunteer" parameterType="String">
+		DELETE VOLUNTEER
+		WHERE VOL_NUM = #{volNum}
+	</delete>
+	
+	<!-- 수정 -->
+	<update id="updateVolunteer" parameterType="VolunteerVO">
+		UPDATE VOLUNTEER
+		SET    START_DATE = #{startDate}, END_DATE = #{endDate}, VOL_RECOG_TIME = #{volRecogTime},
+		       VOL_ACT_CODE = #{VOL_ACT_CODE}, INS_NAME = #{insName}, VOL_ACT_CONTENT = #{volActContenT}, 
+		       PROC_STAT_CODE = #{procStatCode}, DISAUTH_RSN = #{disauthRsn}, FILE_GR_NUM = #{fileGrNum}, APPLY_DATE = sysdate
+		WHERE  VOL_NUM = #{volNum}
+	</update>
+</mapper>

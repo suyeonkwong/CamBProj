@@ -1,0 +1,81 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script src="\resources\js\jquery.min.js"></script>
+<div style="margin-left: 350px;">
+	<div>
+		<input type="date" id="consultAvlDate" name="consultAvlDate">
+		<button>검색</button>
+	</div>
+	<br /><br />
+	<div>
+		<table border="1" id="sel">
+			<thead>
+				<tr>
+					<td>상담번호</td>
+					<td>상담원</td>
+					<td>상담 일자</td>
+					<td>시작 시간</td>
+					<td>종료 시간</td>
+					<td>잔여석</td>
+					<td>정원</td>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="row" items="${vo}">
+					<tr id="table_sel" onclick="setVal(this);">
+						<td>${row.consultSchdlNum}</td>
+						<td>${row.profId}</td>
+						<td>${row.consultAvlDate}</td>
+						<td>${row.startTime}</td>
+						<td>${row.endTime}</td>
+						<td>${row.capSeat}</td>
+						<td>${row.cap}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	
+
+	function setVal(tr) {
+		var tdList = $(tr).children('td');
+		var consultSchdlNum  = tdList[0].innerHTML;
+		var profId = tdList[1].innerHTML;
+		var date = tdList[2].innerHTML + ":::" +  tdList[3].innerHTML + "~" + tdList[4].innerHTML;
+		
+		opener.document.getElementById("consultSchdlNum").value = consultSchdlNum;
+		opener.document.getElementById("profId").value = profId;
+		opener.document.getElementById("applyDate").value = date;
+		
+		self.close();
+		
+		
+	}
+	
+	
+	
+	
+//  function fn_tableSel(sel){
+// 	 alert(sel);
+// // 	 var str = document.getElementsByTagName('tr').childNodes[0].nodeValue;
+// // 	 alert(str);
+	
+//  }
+$(function(){
+// 	alert("@@@");
+	
+});
+		
+
+</script>
+
+<!-- function setValue(tr) { -->
+<!-- 		var tdList = $(tr).children('td'); -->
+<!-- 		var authLineNum = $(tdList[0]).text(); -->
+<!-- 		var authLineStep = $(tdList[2]).html(); -->
+<!-- 		opener.document.getElementById("authLineNum").value = authLineNum; -->
+<!-- 		opener.document.getElementById("authLineStep").innerHTML = authLineStep; -->
+<!-- 		self.close(); -->
+<!-- } -->

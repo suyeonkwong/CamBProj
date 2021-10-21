@@ -1,0 +1,9 @@
+package kr.or.ddit.common.login.service;
+
+import kr.or.ddit.common.login.vo.MemberVO;
+
+public interface LoginService {
+	
+	MemberVO login(MemberVO memberVo);
+
+}

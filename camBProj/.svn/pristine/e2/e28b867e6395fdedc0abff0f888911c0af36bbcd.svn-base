@@ -1,0 +1,29 @@
+package kr.or.ddit.student.takeOff.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.takeOff.mapper.TakeOffMapper;
+import kr.or.ddit.student.takeOff.service.TakeOffService;
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+
+@Service
+public class TakeOffServiceImpl implements TakeOffService{
+
+	@Autowired
+	TakeOffMapper takeOffMapper;
+	
+	@Override
+	public List<TakeOffVO> list(Map<String, Object> map) {
+		return takeOffMapper.list(map);
+	}
+
+	@Override
+	public int totalCount() {
+		return takeOffMapper.totalCount();
+	}
+	
+}

@@ -1,0 +1,22 @@
+package kr.or.ddit.student.registrationLecture.mapper;
+
+import java.util.List;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.registrationLecture.vo.RegistrationLectureVO;
+
+@Mapper("registrationLectureMapper")
+public interface RegistrationLectureMapper {
+	
+	// 수강 신청한 목록 가져오기
+	public List<RegistrationLectureVO>registrationLectureApplySelect(RegistrationLectureVO registrationLectureVo);
+	
+	// 수강 신청한 목록 수
+	public int registrationLectureCount(RegistrationLectureVO registrationLectureVo);
+	
+	// 수강 신청하기
+	public int registrationLectureInsert(RegistrationLectureVO registrationLectureVo);
+	
+	// 수강 신청 취소하기
+	public int registrationLectureDelete(RegistrationLectureVO registrationLectureVo);
+}

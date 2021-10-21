@@ -1,0 +1,93 @@
+package kr.or.ddit.util.auth.vo;
+
+public class AuthDocVO {
+	
+	private String authDocFormNum;
+	private String authDocNum;
+	private String authLineNum;
+	private String memId;
+	private String fileGrNum;
+	private String rcpCode;
+	private String title;
+	private String content;
+	private String rcpDate;
+	private String authStatCode;
+	private int rnum;
+	
+	public String getAuthDocFormNum() {
+		return authDocFormNum;
+	}
+	public void setAuthDocFormNum(String authDocFormNum) {
+		this.authDocFormNum = authDocFormNum;
+	}
+	public String getAuthDocNum() {
+		return authDocNum;
+	}
+	public void setAuthDocNum(String authDocNum) {
+		this.authDocNum = authDocNum;
+	}
+	public String getAuthLineNum() {
+		return authLineNum;
+	}
+	public void setAuthLineNum(String authLineNum) {
+		this.authLineNum = authLineNum;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public String getFileGrNum() {
+		return fileGrNum;
+	}
+	public void setFileGrNum(String fileGrNum) {
+		this.fileGrNum = fileGrNum;
+	}
+	public String getRcpCode() {
+		return rcpCode;
+	}
+	public void setRcpCode(String rcpCode) {
+		this.rcpCode = rcpCode;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public String getRcpDate() {
+		return rcpDate;
+	}
+	public void setRcpDate(String rcpDate) {
+		this.rcpDate = rcpDate;
+	}
+	public String getAuthStatCode() {
+		return authStatCode;
+	}
+	public void setAuthStatCode(String authStatCode) {
+		this.authStatCode = authStatCode;
+	}
+	public int getRnum() {
+		return rnum;
+	}
+	public void setRnum(int rnum) {
+		this.rnum = rnum;
+	}
+	@Override
+	public String toString() {
+		return "AuthDocVO [authDocFormNum=" + authDocFormNum + ", authDocNum=" + authDocNum + ", authLineNum="
+				+ authLineNum + ", memId=" + memId + ", fileGrNum=" + fileGrNum + ", rcpCode=" + rcpCode + ", title="
+				+ title + ", content=" + content + ", rcpDate=" + rcpDate + ", authStatCode=" + authStatCode + ", rnum="
+				+ rnum + "]";
+	}
+	
+	
+	
+}

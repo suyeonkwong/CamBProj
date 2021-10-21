@@ -1,0 +1,75 @@
+package kr.or.ddit.student.takeOff.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.student.takeOff.service.TakeOffService;
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+import kr.or.ddit.util.code.service.CodeService;
+import kr.or.ddit.util.code.vo.CodeVO;
+import kr.or.ddit.util.file.controller.FileController;
+
+@Controller
+@RequestMapping("/student/takeOff/*")
+public class TakeOffController {
+
+	@Autowired
+	FileController fileController;
+	
+	@Autowired
+	TakeOffService takeOffService;
+	
+	@Autowired
+	CodeService codeService;
+	
+	@RequestMapping(value = "/takeOffApply", method = RequestMethod.GET)
+	public String insert(Model model) {
+		List<CodeVO> codeList = codeService.codeList("TAK_OFF");
+		model.addAttribute("codeList", codeList);
+		return "student/takeOff/insert";
+	}
+
+	@RequestMapping(value = "/takeOffApply", method = RequestMethod.POST)
+	public String insertPost(@ModelAttribute TakeOffVO takeOffVo) {
+		String fileGrNum = fileController.fileUpload(takeOffVo.getFileList());
+		System.out.println("file fileGrNum : " + fileGrNum);
+		return "student/takeOff/insert";
+	}
+
+	@RequestMapping(value = "/takeOffApplyDetail", method = RequestMethod.GET)
+	public String list(Model model, @RequestParam(defaultValue = "1") String pageNo) {
+		
+		// 리스트 가져오기
+		Map<String, Object> map = new HashMap<>();
+		map.put("pageNo", pageNo);
+		List<TakeOffVO> takeOffList = takeOffService.list(map);
+		model.addAttribute("takeOffList", takeOffList);
+
+		//페이징 처리
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(Integer.parseInt(pageNo));
+		paginationInfo.setRecordCountPerPage(5);
+		paginationInfo.setPageSize(5);
+		paginationInfo.setTotalRecordCount(takeOffService.totalCount());
+		model.addAttribute("paginationInfo", paginationInfo);
+
+		return "student/takeOff/list";
+	}
+	
+	
+	@RequestMapping(value = "/takeOffApplyUpdate", method = RequestMethod.GET)
+	public String update() {
+		return "student/takeOff/popUp/update";
+	}
+
+}

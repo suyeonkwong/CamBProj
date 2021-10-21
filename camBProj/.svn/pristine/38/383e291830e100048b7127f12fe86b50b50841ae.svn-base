@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.dorm.mapper.DormMapper">
+	<!-- 건물만 가져오기, 사용X -->
+	<select id="selectBuildCode" resultType="kr.or.ddit.student.dorm.vo.DormRoomVO">
+		SELECT DISTINCT(BUILD_CODE)
+		FROM DORM_ROOM
+		ORDER BY BUILD_CODE
+	</select>
+	<!-- 건물코드에 따른 방 정보 -->
+	<select id="selectDormRoom" parameterType="String"  resultType="kr.or.ddit.student.dorm.vo.DormRoomVO">
+		SELECT 
+		 ROOM_IDN_NUM
+		,MAX_CAP
+		,ROOM_NUM
+		,BUILD_CODE
+		FROM DORM_ROOM
+		WHERE BUILD_CODE = #{buildCode}
+	</select>
+	<!-- 기숙사 신청 -->
+	<insert id="DromApply" parameterType="kr.or.ddit.student.dorm.vo.DormVO">
+		<selectKey order="BEFORE" keyProperty="entrApplyNum" resultType="String">
+			SELECT MAX(NVL(TO_NUMBER(ENTR_APPLY_NUM), 0)) + 1
+			FROM DORM_ENTRANCE_APPLY
+		</selectKey>
+		INSERT INTO DORM_ENTRANCE_APPLY
+		(STD_ID
+		,YEAR
+		,ACPT_YN
+		,FEE_PAY_YN
+		,SEM_CODE
+		,ENTR_APPLY_NUM
+		,BUILD_CODE
+		)
+		VALUES
+		('210101001'
+		,#{year}
+		,'N'
+		,'N'
+		,#{semCode}
+		,#{entrApplyNum}
+		,#{buildCode}
+		)
+	</insert>
+</mapper>

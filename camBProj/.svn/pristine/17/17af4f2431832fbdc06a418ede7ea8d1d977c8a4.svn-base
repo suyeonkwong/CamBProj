@@ -1,0 +1,19 @@
+package kr.or.ddit.student.readingRoom.service;
+
+import java.util.List;
+
+import kr.or.ddit.student.readingRoom.vo.ReadingRoomSeatVO;
+import kr.or.ddit.student.readingRoom.vo.ReadingRoomVO;
+
+public interface ReadingRoomService {
+	
+	//열람실전체 테이블 조회
+	List<ReadingRoomVO> selectReadingRoom();
+	//열람실 한개의 정보 조회
+	ReadingRoomVO selectReadingRoomDetail(String roomIdnNum);
+	//열람실별 좌석 조회
+	List<ReadingRoomSeatVO> selectReadingRoomSeat(String roomIdnNum);
+	
+	
+
+}

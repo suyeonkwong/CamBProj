@@ -1,0 +1,266 @@
+package kr.or.ddit.professor.lecture.controller;
+
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.common.login.vo.MemberVO;
+import kr.or.ddit.professor.lecture.service.LectureService;
+import kr.or.ddit.professor.lecture.vo.LectureOpenVO;
+import kr.or.ddit.professor.lecture.vo.LectureRoomVO;
+import kr.or.ddit.professor.lecture.vo.SubjectVO;
+import kr.or.ddit.professor.lecture.vo.SyllabusVO;
+import kr.or.ddit.student.volunteer.vo.VolunteerVO;
+import kr.or.ddit.util.auth.controller.AuthDocController;
+
+@Controller
+public class LectureController {
+	
+	@Autowired
+	LectureService lectureService; 
+	
+	
+	//결재 문서 번호 처리용 컨트롤러
+	@Autowired
+	AuthDocController authController; 
+	
+	
+	private static Logger logger = LoggerFactory.getLogger(LectureController.class);
+	
+	@RequestMapping(value = "/professor/list", method = RequestMethod.GET)
+	public String proList(Model model,@RequestParam(defaultValue = "1") String pageNo,
+			@RequestParam Map<String, Object> map, HttpServletRequest request,HttpSession session, MemberVO memberVo) {
+		logger.info("map : "+map);
+		if(map.get("pageNo")==null) {
+			logger.info("pageNo null");
+			map.put("pageNo", "1");
+		}
+		if(map.get("selectYear")==null) {
+			logger.info("selectYear null");
+			map.put("selectYear", "");
+		}
+		if(map.get("selectSemester")==null) {
+			logger.info("selectSemester null");
+			map.put("selectSemester", "");
+		}
+		if(map.get("searchKeyword")==null) {
+			logger.info("searchKeyword null");
+			map.put("searchKeyword", "");
+		}
+		logger.info("map2 : "+map);
+
+		List<LectureOpenVO> list = this.lectureService.selectLectureList(map);
+		
+		//교수 세션 받기
+		session = request.getSession();
+		memberVo =  (MemberVO) session.getAttribute("memberVo");
+		String memId = "";
+		if(memberVo != null) {
+			memId = memberVo.getMemId();
+			logger.info("memId : "+memId);
+			LectureOpenVO dept = this.lectureService.searchDeptName(memId);
+			model.addAttribute("dept", dept);
+			logger.info("dept: " + dept);
+		}
+		
+		logger.info("session : "+session);
+		
+		
+		
+		model.addAttribute("list", list);
+		logger.info("리스트 모델 : " + model);
+		PaginationInfo paginationInfo = new PaginationInfo();
+		logger.info("count >>>>>>" + paginationInfo.getTotalRecordCount());
+		int totalCount = this.lectureService.selectCount(map);
+		paginationInfo.setTotalRecordCount(totalCount); // 전체 행의 수
+		paginationInfo.setCurrentPageNo(Integer.parseInt(pageNo)); // 현재 페이지
+		paginationInfo.setRecordCountPerPage(5); // 한 페이지 당 행의 수 
+		paginationInfo.setPageSize(5); // 페이징 크기
+		
+		model.addAttribute("paginationInfo", paginationInfo);
+		return "professor/study/list";
+	}
+	
+	@RequestMapping("/professor/study/lectureRoom/lectureRoomList")
+	public String lectureRoomList(Model model, @ModelAttribute LectureRoomVO lectureRoomVO) {
+		
+		if(lectureRoomVO.getBuildCode()==null) {
+			logger.info("BuildCode null");
+			lectureRoomVO.setBuildCode("");
+		}
+		if(lectureRoomVO.getRoomNum()==null) {
+			logger.info("RoomNum null");
+			lectureRoomVO.setRoomNum("");
+		}
+		
+		logger.info("lectureRoomVO.getBuildCode() : " +lectureRoomVO.getBuildCode());
+		logger.info("lectureRoomVO.getRoomNum() : " +lectureRoomVO.getRoomNum());
+		
+		List<LectureRoomVO> lectRoom = this.lectureService.searchLectRoom(lectureRoomVO);
+		model.addAttribute("lectRoom", lectRoom);
+		
+		return "professor/study/lectureRoom/lectureRoomList";
+	}
+
+
+
+	@RequestMapping("/professor/study/lectureSubject/lectureSubject")
+	public String lectureSubject(Model model, @ModelAttribute SubjectVO subjectVO,
+			@RequestParam(defaultValue = "1") String pageNo) {
+		logger.info(" subjectVO: " + subjectVO);
+		logger.info(subjectVO.getUnivDeptNum());
+		
+		if(subjectVO.getPageNo()==0) {
+			logger.info("pageNo null");
+			subjectVO.setPageNo(1);
+			logger.info("pageNo :" + subjectVO.getPageNo());
+		}
+		if(subjectVO.getSearchKeyword()==null) {
+			logger.info("searchKeyword null");
+			subjectVO.setSearchKeyword("");
+		}
+			
+		//deptNum으로 강의 정보 받아오는 쿼리
+		List<SubjectVO> subjectVO2 = this.lectureService.searchLectName(subjectVO);
+		model.addAttribute("subjectVO2", subjectVO2);
+		logger.info("강의명 조회 subjectVO : " + subjectVO2);
+		
+		// 페이징
+		PaginationInfo paginationInfo = new PaginationInfo();
+		
+		int totalCount = this.lectureService.searchLectCount(subjectVO);
+		logger.info("count >>>>>>" + totalCount);
+		
+		paginationInfo.setTotalRecordCount(totalCount); // 전체 행의 수
+		paginationInfo.setCurrentPageNo(Integer.parseInt(pageNo)); // 현재 페이지
+		paginationInfo.setRecordCountPerPage(10); // 한 페이지 당 행의 수 
+		paginationInfo.setPageSize(5); // 페이징 크기
+		
+		model.addAttribute("paginationInfo", paginationInfo);
+		
+		
+		return "professor/study/lectureSubject/lectureSubject";
+	}
+	
+	@RequestMapping("/professor/detail")
+	public String proDetail(@RequestParam String lectOpenNum, Model model) {
+		logger.info("디테일 lectOpenNum : " + lectOpenNum);
+		
+		LectureOpenVO lectureOpenVO = this.lectureService.detailLectureOpen(lectOpenNum);
+		SyllabusVO syllabusvo = this.lectureService.detailSyllabus(lectOpenNum);
+		logger.info("syllabusvo : "+ syllabusvo);
+		logger.info("model : " + model);
+		
+		model.addAttribute("lectureOpenVO",lectureOpenVO);
+		model.addAttribute("syllabusvo",syllabusvo);
+		return "professor/study/detail";
+	}
+	
+	
+	@RequestMapping("/professor/study/update")
+	public String lectureUpdate(@ModelAttribute LectureOpenVO lectureOpenVO) {
+		
+		logger.info("업데이트 lectureOpenVO.getLectOpenNum() : " + lectureOpenVO);
+		int result = this.lectureService.updateLecture(lectureOpenVO);
+		String status = "";
+		if(result>0) {//수정 완료
+			status = "ok";
+		}else {//수정 실패
+			status = "fail";
+		}
+		
+		return "redirect:/professor/detail?lectOpenNum="+lectureOpenVO.getLectOpenNum()+"&result="+status;
+	}
+	
+	
+	@RequestMapping("/professor/study/delete")
+	public String lectDelete(@ModelAttribute LectureOpenVO lectureOpenVO) {
+		logger.info(lectureOpenVO + "");
+		
+		String lectOpenNum = lectureOpenVO.getLectOpenNum();
+		int result = this.lectureService.deleteLectureOpen(lectOpenNum);
+		String status = "";		
+		if(result>0) {//삭제 완료
+			status = "ok";
+		}else {//수정 실패
+			status = "fail";
+		}
+		
+		String pageNo = lectureOpenVO.getPageNo();
+		
+		return "redirect:/professor/list?pageNo="+pageNo+"&result="+status;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/professor/classPlan/classPlanUpdate",method=RequestMethod.POST)
+	public int classPlanUpdate(@RequestBody SyllabusVO syllabusVO) {
+		logger.info("syllabusVO :" + syllabusVO);
+		
+		int result = this.lectureService.updateSyllabus(syllabusVO);
+		
+		logger.info("result : " + result);
+		return result;
+	}
+	
+	//강의 등록
+	@RequestMapping("/professor/insert")
+	public String proInsert(HttpServletRequest request,HttpSession session, MemberVO memberVo,Model model) {
+		
+//		String authDocNum = authController.authDocInsert("07");  insert작업 메서드 하나 만들어서 넣어줘야 인서트 페이지 들어갈때마다 작업되는 현상이 안나옴
+		//교수 세션 받기
+		session = request.getSession();
+		memberVo =  (MemberVO) session.getAttribute("memberVo");
+		String memId = "";
+		if(memberVo != null) {
+			memId = memberVo.getMemId();
+			LectureOpenVO lectVo = this.lectureService.searchDeptName(memId);
+			logger.info("lectVo : " +lectVo);
+			model.addAttribute("lectVo", lectVo);
+			
+		}
+		
+		return "professor/study/insert";
+	}
+	
+	
+	
+	
+	@RequestMapping("/professor/classPlan/classPlanDetail")
+	public String classPlanDetail() {
+		return "professor/study/classPlan/classPlanDetail";
+	}
+	
+	
+	
+	@RequestMapping("/professor/study/lectureEvaluationList")
+	public String lectureEvaluationList() {
+		return "professor/study/lectureEvaluationList";
+	}
+	
+
+	@RequestMapping("/professor/study/lectureEvaluationDetail")
+	public String lectureEvaluationDetail() {
+		return "professor/study/lectureEvaluationDetail";
+	}
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.readingRoom.mapper.ReadingRoomMapper">
+	<!-- 열람실 전체 테이블 조회 -->
+	<select id="selectReadingRoom" resultType="kr.or.ddit.student.readingRoom.vo.ReadingRoomVO">
+		SELECT 
+		    ROW_NUMBER() OVER (ORDER BY ROOM_IDN_NUM) RNUM
+		  , ROOM_IDN_NUM
+		  , ROOM_NAME 
+		  , SEAT_CNT
+		  , ROOM_NUM
+		  , BUILD_CODE
+		FROM 
+			READING_ROOM
+	</select>
+	
+	<!-- 열람실 한개의 정보 조회 -->
+	<select id="selectReadingRoomDetail" parameterType="String" resultType="kr.or.ddit.student.readingRoom.vo.ReadingRoomVO">
+		SELECT 
+			ROOM_IDN_NUM
+		  , ROOM_NAME
+		  , SEAT_CNT
+		  , ROOM_NUM
+		  , BUILD_CODE 
+		FROM 
+			READING_ROOM
+		WHERE 
+			ROOM_IDN_NUM = #{roomIdnNum}
+	</select>
+	
+	<!-- 열람실별 좌석 조회 -->
+	<select id="selectReadingRoomSeat" parameterType="String" resultType="kr.or.ddit.student.readingRoom.vo.ReadingRoomSeatVO">
+		SELECT 
+		    ROOM_IDN_NUM
+		  , SEAT_IDN_NUM
+		  , AVL_YN 
+		  , SEAT_NUM
+		FROM 
+			READING_ROOM_SEAT
+		WHERE 
+			ROOM_IDN_NUM = #{roomIdnNum}
+	</select>
+</mapper>

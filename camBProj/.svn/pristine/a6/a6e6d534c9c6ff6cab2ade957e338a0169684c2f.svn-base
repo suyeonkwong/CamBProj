@@ -1,0 +1,66 @@
+package kr.or.ddit.common.notice.controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.common.notice.service.NoticeService;
+import kr.or.ddit.common.notice.vo.NoticeVO;
+import kr.or.ddit.student.volunteer.controller.VolunteerController;
+
+
+@Controller
+@RequestMapping("/common/notice/*")
+public class NoticeController {
+	
+	@Autowired
+	private NoticeService noticeService;
+	
+	Logger logger = LoggerFactory.getLogger(VolunteerController.class);
+	
+	@RequestMapping(value="/noticeList", method=RequestMethod.GET)
+	public String noticeList(Model model, @RequestParam(defaultValue = "1") String pageNo){
+		
+		List<NoticeVO> list = this.noticeService.noticeList(pageNo);
+		
+		model.addAttribute("list", list);
+		
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		int totalCnt = this.noticeService.selectCnt();
+		paginationInfo.setTotalRecordCount(totalCnt);
+		paginationInfo.setCurrentPageNo(Integer.parseInt(pageNo));
+		paginationInfo.setRecordCountPerPage(5); 
+		paginationInfo.setPageSize(5);
+		
+		model.addAttribute("paginationInfo", paginationInfo);	
+			
+		return "common/notice/noticeList";		
+	}
+	
+	//등록창
+	@RequestMapping(value="/noticeInsert",method=RequestMethod.GET)
+	public String noticeInsert() {
+		return "common/notice/noticeInsert";
+	}
+	
+	//등록
+	@RequestMapping(value="/noticeInsert",method=RequestMethod.POST)
+	public String noticeInsertPost(@ModelAttribute NoticeVO noticeVo) {
+		
+		int result = this.noticeService.noticeInsert(noticeVo);
+		
+		return "redirect:/common/notice/noticeList";
+	}
+
+	
+}

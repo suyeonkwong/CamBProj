@@ -1,0 +1,77 @@
+1. github 본인 계정이 sql이라는 이름으로 새로운 원격 저장소 생성
+
+2. D:\A_TeachingMaterial\2.Oracle\other\sql폴더를 git 로컬 저장소 초기화
+
+3. 2번의 로컬 저장소와 1번의 원격 저장소를 연결 설정
+
+4.test.txt(파일 내용은 test) commit 후 원격저장소에 반영
+
+working area       staging area       local repository       remote repository
+                 ==>                 ==>                     ==>
+         add(드래그&드랍)     commit(메시지)         push
+
+
+깃허브에서 원격 저장소 생성(new버튼 이름은 sql로 작성)
+.git폴더가 있어야 로컬 저장소 됨 (git으로 초기화 필수 create )
+경로 선택 후 생성하면 sql폴더에 git이라는 디렉토리 생성
+orgin이름으로 원격자장소 이름 설정(URL정보를 이름지정하는것은 도메인과 같은 개념.)
+노트패드에 test.txt이름으로 sql폴더에 저장설정
+commit하기
+
+
+git-scm.com
+GUI clients(요청을 보낸다는 뜻) sqldeveloper는 서버에 요청을 보내는 clients임
+
+source tree(client)     ==>  git
+SQL developer(client) ==> 
+
+트랜잭션: 여러 단계의 과정을 하나의 작업 행위로 묶는 단위(시험에 나옴 굉장히 중요)
+DDL(data definition language): 데이터 정의
+DML(data manipulation language) : 데이커 조작
+DCL(data control language): 데이터 제어
+TCL(transction control): 트랜잭션 제어
+
+수업시간 code rule
+키워드는 무조건 대문자
+그외 소문자
+
+
+
+---------------------------------------------------------------------------------------------------------------
+패키지는 클래스를 담는 폴더임.
+패키지를 설정하지 않으면 자동으로 디펄트 패키지로 클래스가 들어감.
+'{ }' 은 블록이라고 함.
+클래스는 변수와 메세지로 만들어짐.
+'( )'는 무조건 메서드임.
+메서드는 명령문들의 집합임.
+main은 메서드의 이름임.
+한줄주석 처리 단축키 : Ctrl + Shift + c
+범위주석 처리 단축키 : Ctrl + Shift + /(해제 : \)
+문자 데이터는 따음표로 묶여있음.
+실행 단축키 : Ctrl + F11
+변수밖에 따로 값을 저장하고 변수는 그 주소를 저장하는것임. 
+주소를 참조하고 들어가는것이 참조형 타입임. (ex.String)
+String은 하나의 class라고 생각하기
+데이터 타입과 크기까지 외우기
+형변환은 데이터의 타입을 다른 타입으로 바꾸는 것임.
+명명때 한글은 웬만하면 사용하지 말것.
+클래스의 이름을 지을때는 반드시 앞글자를 대문자로 한다.
+변하지 않는 값을 리터럴이라고 함.
+final은 값을 바꾸지 못하게 해서 상수로 변하게 함.
+만약 값을 10에서 20으로 바꾸지 못하게 하려면final 사용
+print에서 pritnln을 하고싶으면 \n붙이기.
+\t는 tab역할을 함.
+%s는 문자열 %d는 숫자 출력 포맷 지정
+String타입은 문자열과 만나면 숫자도 문자열로 같이 바뀜 +와 같이 쓰기.
+콘솔에서 입력값을 받을때Scanner는 다른 패키치에 있어서 어디있는지 알려줘야하는 import해야함. 
+import단축키 : Ctrl + Shift + o
+nextLine()는 문자열을 입력받아주는 메서드
+기본형 타입과 참조형 타입의 형변환은 불가능함.
+그땐 Integer.parseInt사용.
+
+
+
+
+
+
+

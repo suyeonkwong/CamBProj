@@ -1,0 +1,90 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script src="\resources\js\jquery.min.js"></script>
+<div style="margin-left: 350px;">
+	<div>
+		<input type="date" id="consultAvlDate" name="consultAvlDate">
+		<button>검색</button>
+	</div>
+	<br /><br />
+	<div>
+		<table border="1" id="sel">
+			<thead>
+				<tr>
+					<td>상담원</td>
+					<td>상담 일자</td>
+					<td>시작 시간</td>
+					<td>종료 시간</td>
+					<td>잔여석</td>
+					<td>정원</td>
+				</tr>
+			</thead>
+			<tbody>
+				<a id="link">
+					<c:forEach var="vo" items="${vo}">
+					<tr id="table_sel">
+						<td>${vo.profId}</td>
+						<td>${vo.consultAvlDate}</td>
+						<td>${vo.startTime}</td>
+						<td>${vo.endTime}</td>
+						<td>${vo.capSeat}</td>
+						<td>${vo.cap}</td>
+					</tr>
+				</c:forEach>
+				</a>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+
+//  function fn_tableSel(sel){
+// 	 alert(sel);
+// // 	 var str = document.getElementsByTagName('tr').childNodes[0].nodeValue;
+// // 	 alert(str);
+	
+//  }
+$(function(){
+// 	alert("@@@");
+	$("#sel tr").click(function(){
+		var tr = $(this);
+// 		alert(tr.text()); 
+		var td = tr.children();
+// 		alert(td); object Object
+
+// 		console.log(tr.text());
+		
+		var profId = td.eq(0).text();
+		var consultAvlDate = td.eq(1).text();
+		var startTime = td.eq(2).text();
+		var endTime = td.eq(3).text();
+// 		var capSeat = td.eq(4).text();
+// 		var cap = td.eq(5).text();
+		
+// 		alert(endTime);
+		
+		var date = consultAvlDate + ":::" + startTime + "~" + endTime;
+		alert(date);
+		
+		
+<%-- 		$("#link").attr("href", "/student/consult/consultationApply?'date=<%= date%>'"); --%>
+		
+		opener.document.getElementById("applyDate").value = date;
+// 		opener.document.getElementById("applyDate").innerHTML = date;
+		self.close();
+		
+	});
+	
+});
+		
+
+</script>
+
+<!-- function setValue(tr) { -->
+<!-- 		var tdList = $(tr).children('td'); -->
+<!-- 		var authLineNum = $(tdList[0]).text(); -->
+<!-- 		var authLineStep = $(tdList[2]).html(); -->
+<!-- 		opener.document.getElementById("authLineNum").value = authLineNum; -->
+<!-- 		opener.document.getElementById("authLineStep").innerHTML = authLineStep; -->
+<!-- 		self.close(); -->
+<!-- } -->

@@ -1,0 +1,34 @@
+package kr.or.ddit.student.consult.service.impl;
+
+import java.util.List;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.consult.mapper.ConsultMapper;
+import kr.or.ddit.student.consult.service.ConsultService;
+import kr.or.ddit.student.consult.vo.ConsultScheduleVO;
+import kr.or.ddit.student.consult.vo.ConsultVO;
+
+@Service
+public class ConsultServiceImpl implements ConsultService{
+	
+	@Autowired
+	private ConsultMapper consultMapper;
+	
+	//교수들 상담 스케줄 검색
+	@Override
+	public List<ConsultScheduleVO> selectConsultSchedule(){
+		System.out.println("service>>>>>>>>");
+		return this.consultMapper.selectConsultSchedule();
+	}
+	
+	//상담신청
+	@Override
+	public int insertConsult(ConsultVO consultVo) {
+		
+		System.out.println("service왔다>>>>>>>");
+		return this.consultMapper.insertConsult(consultVo);
+	}
+}

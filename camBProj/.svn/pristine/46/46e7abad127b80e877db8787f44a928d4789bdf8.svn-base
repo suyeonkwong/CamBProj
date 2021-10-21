@@ -1,0 +1,47 @@
+package kr.or.ddit.util.auth.service;
+
+import java.util.List;
+import java.util.Map;
+
+import kr.or.ddit.util.auth.vo.AuthDetailInfoVO;
+import kr.or.ddit.util.auth.vo.AuthDocFormVO;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.auth.vo.AuthStepVO;
+
+public interface AuthService {
+	
+	/**
+	 *  AuthLine 결재 라인  
+	 */
+	public List<AuthLineStepVO> authLineList(AuthLineStepVO authLineStepVo);
+	
+	public int authLineTotalCount();
+	
+	public List<AuthStepVO> authStepSearch(AuthStepVO authStepVo);
+	
+	public int authLineStepInsert(AuthLineStepVO authLineStepVo);
+	
+	/**
+	 *  AuthDocForm 결재 문서 양식  
+	 */
+	public AuthDocFormVO authDocFormDetail();
+	
+
+	/**
+	 *  AuthDoc 결재 문서
+	 */
+	public String authDocInsert(String authDocFormNum, String fileGrNum);
+	
+	public List<AuthDocVO> authDocList(AuthDocVO authDocVo);
+	
+	public int authDocTotalCount(AuthDocVO authDocVo);
+	
+	public AuthDocVO authDocDetail(String authDocNum);
+	
+	public int authDocUpdateAndAuthDetailInfoInsert(AuthDocVO authDocVo);
+	
+	public int authDetailInfoInsert(List<AuthDetailInfoVO> authDetailInfoVoList);
+	
+	public List<AuthDetailInfoVO> authDetailInfoList(String authDocNum);
+}

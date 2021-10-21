@@ -1,0 +1,32 @@
+package kr.or.ddit.student.dorm.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.student.dorm.service.DormService;
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+
+@Controller
+@RequestMapping("/student/dorm/*")
+public class DormController {
+	
+	Logger logger = LoggerFactory.getLogger(DormController.class);
+	
+	private DormService dormService;
+	
+	//생활관 신청 양식
+	@RequestMapping(value="/dormApply")
+	public String dormApllyForm(Model model) {
+		
+		//생활관 신청할때 방 정보 전체 불러오기
+		DormRoomVO dormRoomVo = this.dormService.selectDormRoom();
+		logger.info("111");
+		model.addAttribute("dormRoomVo", dormRoomVo);
+		
+		return "student/dorm/dormApply";
+	}
+
+}

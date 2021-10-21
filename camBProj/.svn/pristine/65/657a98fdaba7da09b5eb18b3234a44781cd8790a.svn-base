@@ -1,0 +1,44 @@
+/*
+ * package kr.or.ddit.common.login.controller;
+ * 
+ * import org.slf4j.LoggerFactory;
+ * 
+ * import javax.servlet.http.HttpSession;
+ * 
+ * import org.slf4j.Logger; import
+ * org.springframework.beans.factory.annotation.Autowired; import
+ * org.springframework.http.HttpRequest; import
+ * org.springframework.stereotype.Controller; import
+ * org.springframework.ui.Model; import
+ * org.springframework.web.bind.annotation.ModelAttribute; import
+ * org.springframework.web.bind.annotation.RequestMapping; import
+ * org.springframework.web.bind.annotation.RequestMethod; import
+ * org.springframework.web.servlet.ModelAndView;
+ * 
+ * import kr.or.ddit.admin.member.vo.MemberVO; import
+ * kr.or.ddit.common.login.service.LoginService;
+ * 
+ * @Controller public class LoginController {
+ * 
+ * @Autowired private LoginService loginService;
+ * 
+ * Logger logger = LoggerFactory.getLogger(LoginController.class);
+ * 
+ * // 로그인
+ * 
+ * @RequestMapping(value = "/login", method = RequestMethod.GET) public Model
+ * login(@ModelAttribute MemberVO memVo, HttpRequest request) {
+ * 
+ * return mav; }
+ * 
+ * // 로그아웃
+ * 
+ * @RequestMapping(value = "/", method = RequestMethod.POST) public String
+ * logout(HttpSession session) { // 모든 세션을 로그아웃 함 session.invalidate();
+ * 
+ * return "redirect:/";
+ * 
+ * }
+ * 
+ * }
+ */

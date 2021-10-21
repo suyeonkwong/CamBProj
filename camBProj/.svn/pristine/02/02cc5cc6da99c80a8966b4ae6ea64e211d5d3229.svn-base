@@ -1,0 +1,13 @@
+package kr.or.ddit.util.file.service;
+
+import java.util.List;
+
+import kr.or.ddit.util.file.vo.AttachFileGroupVO;
+import kr.or.ddit.util.file.vo.AttachFileVO;
+
+public interface FileService {
+		
+	public int insert(AttachFileGroupVO attachFileGroupVo, List<AttachFileVO> attachFileVoList);
+	
+	public List<AttachFileVO> fileList(String fileGrNum);
+}

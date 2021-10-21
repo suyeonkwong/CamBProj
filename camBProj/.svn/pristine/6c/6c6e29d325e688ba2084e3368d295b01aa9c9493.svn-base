@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.consult.mapper.ConsultMapper">
+	<select id="selectConsultSchedule" resultType="ConsultScheduleVO">
+		SELECT A.PROF_ID
+        , (SELECT B.NAME
+           FROM CONSULT_SCHEDULE A, MEMBER B
+           WHERE A.PROF_ID = B.MEM_ID
+           GROUP BY B.NAME
+           )NAME
+        , C.KOR_NAME DEPARTMENT
+		, TO_CHAR(CONSULT_AVL_DATE,'yyyy-mm-dd') CONSULT_AVL_DATE
+		, A.START_TIME
+		, A.END_TIME 
+		, A.CONSULT_SCHDL_NUM
+		, A.CAP
+		, A.CAP_SEAT
+		, A.CREATE_DATE
+		, A.MOD_DATE
+		FROM CONSULT_SCHEDULE A, PROFESSOR B, UNIVERSITY_DEPARTMENT C
+		WHERE B.UNIV_DEPT_NUM = C.UNIV_DEPT_NUM
+	</select>
+	
+	<insert id="insertConsult" parameterType="ConsultVO">
+		<selectKey keyProperty="consultNum" order="BEFORE" resultType="String">
+			SELECT MAX(NVL(TO_NUMBER(CONSULT_NUM), 0)) + 1 FROM CONSULT
+		</selectKey>
+		INSERT INTO CONSULT(
+		  STD_ID
+		, FILE_GR_NUM
+		, CONSULT_SCHDL_NUM
+		, CONSULT_NUM
+		, APPLY_DATE
+		, CONSULT_CONTENT
+		, CONSULT_RESULT
+		, CONSULT_STF
+		, UNSTF_RSN
+		, PROC_STAT_CODE
+		, CONSULT_GOAL_CODE
+		, CONSULT_TYPE_CODE
+		, CONSULT_MOTIVE_CODE)
+		VALUES('210101001', #{fileGrNum, jdbcType=VARCHAR}
+				, #{consultSchdlNum}, #{consultNum}
+		        , sysdate, #{consultContent}
+		        , #{consultResult}, #{consultStf, jdbcType=VARCHAR}
+		        , #{unstfRsn, jdbcType=VARCHAR}, #{procStatCode, jdbcType=VARCHAR}
+		        , #{consultGoalCode}, #{consultTypeCode}
+		        , #{consultMotiveCode}
+        	  )
+	</insert>
+</mapper>

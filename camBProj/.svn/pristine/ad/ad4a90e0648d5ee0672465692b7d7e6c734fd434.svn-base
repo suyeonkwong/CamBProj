@@ -1,0 +1,104 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script src="\resources\js\jquery.min.js"></script>
+<div>
+	<div style="width: 100%;">
+		<form action="/student/consult/consultationApply" 
+		 enctype="multipart/form-data" method="post" id="insertForm">
+			<div>
+				<h3>상담신청양식</h3>
+			</div>	
+			<div>
+				<div>
+					<div style="display: inline-block;">
+						상담방법<span style="color: red;">*</span><br />
+						<select style="width: 220px;" id="consultTypeCode" name="consultTypeCode">
+							<c:forEach var="code" items="${conTyp}">
+								<option value="${code.codeVal}">${code.codeName}</option>
+							</c:forEach>
+						</select>
+					</div>
+					<div style="display: inline-block;">
+						상담목적<span style="color: red;">*</span><br />
+						<select style="width: 220px;" id="consultGoalCode" name="consultGoalCode">
+							<c:forEach var="code" items="${conGoa}">
+								<option value="${code.codeVal}">${code.codeName}</option>
+							</c:forEach>
+						</select>
+					</div>
+					<div style="display: inline-block;">
+						상담동기<span style="color: red;">*</span><br />
+						<select style="width: 220px;" id="consultMotiveCode" name="consultMotiveCode">
+							<c:forEach var="code" items="${conMot}">
+								<option value="${code.codeVal}">${code.codeName}</option>
+							</c:forEach>
+						</select>
+					</div>
+				</div>
+				<br />
+				<div>
+					<div style="display: inline-block;">
+						상담원<span style="color: red;">*</span><br />
+						<input type="hidden" style="width: 140px;" id="consultSchdlNum" name="consultSchdlNum"> <!-- 스케줄번호 -->
+						<input type="text" style="width: 360px;" id="profId"> <!-- 이름 받아오는걸로 고쳐야함 -->
+						<button type="button" style="width: 80px;" onclick="fn_resvatCf()">예약확인</button>
+					</div>
+					<div style="display: inline-block;">
+						상담일시<span style="color: red;">*</span><br />
+						<input type="text" style="width: 210px;" id="ConsultDate">
+					</div>
+				</div>
+				<br />
+				<div>
+					<div style="display: inline-block;">
+						상담내용<span style="color: red;">*</span><br />
+						<textarea rows="4" cols="80" id="consultContent" name="consultContent"></textarea>
+					</div>
+				</div>
+				<br />
+				<div>
+					<div style="display: inline-block;">
+						상담결과<br />
+						<textarea rows="4" cols="80" readonly
+						  style="background-color:#F1F2F8" id="consultResult" name="consultResult"></textarea>
+					</div>
+				</div>
+				<br />
+				<div>
+					<div>
+						청부파일<br />
+						<input type="file" id="fileList" name="fileList" multiple>
+					</div>
+				</div>
+			</div>
+			<br /><br /><br />
+			<div style="width: 650px;">
+				<div style="float: left;">
+					<button type="button">목록</button>
+				</div>
+				<div style="float: right;">
+					<button type="button" id="btnSubmit">저장</button>
+					<button type="button" id="btnCancel">취소</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	function fn_resvatCf(){
+		var link = '/student/consult/popUp/consultSchedule';
+		window.open(link,'교수예약일정확인','width=1200px,height=600px,left=350px,top=150px,scrollbar=yes');
+	}
+	
+	$(function(){
+		$("#btnSubmit").on("click",function(){
+			var result = confirm("상담신청을 완료하시겠습니까?");
+			if(result){
+				$("#insertForm").submit();
+			}else{
+				return;
+			}
+	
+		});
+	});
+</script>

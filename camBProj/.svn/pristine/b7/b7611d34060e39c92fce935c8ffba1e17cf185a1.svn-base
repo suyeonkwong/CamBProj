@@ -1,0 +1,36 @@
+package kr.or.ddit.student.readingRoom.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.readingRoom.mapper.ReadingRoomMapper;
+import kr.or.ddit.student.readingRoom.service.ReadingRoomService;
+import kr.or.ddit.student.readingRoom.vo.ReadingRoomSeatVO;
+import kr.or.ddit.student.readingRoom.vo.ReadingRoomVO;
+
+@Service
+public class ReadingRoomServiceImpl implements ReadingRoomService{
+	
+	@Autowired
+	private ReadingRoomMapper readingRoomMapper;
+	
+	//열람실전체 테이블 조회
+	@Override
+	public List<ReadingRoomVO> selectReadingRoom(){
+		return this.readingRoomMapper.selectReadingRoom();
+	}
+	
+	//열람실 한개의 정보 조회
+	@Override
+	public ReadingRoomVO selectReadingRoomDetail(String roomIdnNum) {
+		return this.readingRoomMapper.selectReadingRoomDetail(roomIdnNum);
+	}
+	
+	//열람실별 좌석 조회
+	@Override
+	public List<ReadingRoomSeatVO> selectReadingRoomSeat(String roomIdnNum) {
+		return this.readingRoomMapper.selectReadingRoomSeat(roomIdnNum);
+	}
+}

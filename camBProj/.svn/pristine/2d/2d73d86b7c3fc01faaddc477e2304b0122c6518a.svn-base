@@ -1,0 +1,69 @@
+package kr.or.ddit.common.login.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import kr.or.ddit.common.login.vo.MemberVO;
+import kr.or.ddit.common.login.service.LoginService;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+
+@Controller
+public class LoginController {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Autowired
+	private LoginService loginService;
+
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String login() {
+		logger.info("로그인 시작");
+		return "/common/login";
+	}
+
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String loginPost(@ModelAttribute MemberVO memberVo, HttpServletRequest request) {
+
+		logger.info("로그인 시작");
+		logger.info(memberVo.getMemId());
+		logger.info(memberVo.getPwd());
+
+		MemberVO memberVo2 = this.loginService.login(memberVo);
+
+		if (memberVo2 == null) {
+			request.setAttribute("msg", "fail");
+			return "/common/login";
+		}
+
+		logger.info(memberVo2.getName());
+
+		request.getSession().setAttribute("memberVo", memberVo2);
+
+		logger.info("로그인 세선 적용 성공");
+
+		return "redirect:/common/faq/faqList";
+	}
+	
+	
+	//로그아웃
+	@RequestMapping(value="/logout",method=RequestMethod.GET)
+	public ModelAndView logout(HttpSession session) {
+		//모든 세션을 로그아웃 함
+		session.invalidate();
+		 ModelAndView mav = new ModelAndView("redirect:/common/faq/faqList");
+
+		return mav;
+	}
+
+}

@@ -1,0 +1,88 @@
+package kr.or.ddit.util.auth.vo;
+
+import kr.or.ddit.util.BaseVO.BaseVO;
+
+public class AuthDocVO extends BaseVO{
+	
+	private String authDocFormNum;
+	private String authDocNum;
+	private String authLineNum;
+	private String memId;
+	private String fileGrNum;
+	private String rcpCode;
+	private String title;
+	private String content;
+	private String rcpDate;
+	private String updateDate;
+	private String authStatCode;
+	
+	public String getAuthDocFormNum() {
+		return authDocFormNum;
+	}
+	public void setAuthDocFormNum(String authDocFormNum) {
+		this.authDocFormNum = authDocFormNum;
+	}
+	public String getAuthDocNum() {
+		return authDocNum;
+	}
+	public void setAuthDocNum(String authDocNum) {
+		this.authDocNum = authDocNum;
+	}
+	public String getAuthLineNum() {
+		return authLineNum;
+	}
+	public void setAuthLineNum(String authLineNum) {
+		this.authLineNum = authLineNum;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public String getFileGrNum() {
+		return fileGrNum;
+	}
+	public void setFileGrNum(String fileGrNum) {
+		this.fileGrNum = fileGrNum;
+	}
+	public String getRcpCode() {
+		return rcpCode;
+	}
+	public void setRcpCode(String rcpCode) {
+		this.rcpCode = rcpCode;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public String getRcpDate() {
+		return rcpDate;
+	}
+	public void setRcpDate(String rcpDate) {
+		this.rcpDate = rcpDate;
+	}
+	public String getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getAuthStatCode() {
+		return authStatCode;
+	}
+	public void setAuthStatCode(String authStatCode) {
+		this.authStatCode = authStatCode;
+	}
+	
+	
+	
+}

@@ -1,0 +1,23 @@
+package kr.or.ddit.admin.member.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.admin.member.vo.MemberVO;
+
+@Mapper("memberMapper")
+public interface MemberMapper {
+
+//	멤버목록	
+	List<MemberVO> selectMemberList(Map<String, Object> map);
+	
+//	멤버등록
+	int insertMember(MemberVO memberVo);
+	
+//	멤버상세
+	MemberVO detailMember(String memId);
+	
+//	멤버수정
+	int updateMember(MemberVO memberVo);
+}

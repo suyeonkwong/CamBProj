@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.takeOff.mapper.TakeOffMapper">
+
+	<select id="list" parameterType="hashMap" resultType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		SELECT * 
+		FROM (SELECT ROW_NUMBER() OVER (ORDER BY apply_date DESC) rnum
+			  , take_off_apply_num
+			  , sem_cnt
+			  , fn_get_code_name('TAK_OFF', take_off_type_code) take_off_type_code
+			  , std_id
+			  , year
+			  , fn_get_code_name('SEM_COD', sem_code) sem_code
+			  , apply_date
+			  , fn_get_code_name('PRO_STA', proc_stat_code) proc_stat_code
+			  , disauth_rsn
+			  , file_gr_num
+			  , auth_doc_num
+			FROM
+			    take_off
+			    ) t
+			    
+		WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)	    
+	</select>
+	
+	<select id="totalCount" resultType="int">
+		SELECT
+		    COUNT(take_off_apply_num)
+		FROM
+		    take_off
+	</select>
+	
+	
+</mapper>

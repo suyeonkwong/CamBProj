@@ -1,0 +1,27 @@
+package kr.or.ddit.student.dorm.service.serviceImpl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.dorm.controller.DormController;
+import kr.or.ddit.student.dorm.mapper.DormMapper;
+import kr.or.ddit.student.dorm.service.DormService;
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+
+@Service
+public class DormServiceImpl implements DormService{
+	
+	Logger logger = LoggerFactory.getLogger(DormController.class);
+	
+	@Autowired
+	private DormMapper dormMapper;
+	
+	//생활관room 고를때 정보 select
+	@Override
+	public DormRoomVO  selectDormRoom() {
+		logger.info("111");
+		return this.dormMapper.selectDormRoom();
+	}
+}

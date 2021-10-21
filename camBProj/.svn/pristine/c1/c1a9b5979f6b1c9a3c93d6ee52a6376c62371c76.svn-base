@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.takeOff.mapper.TakeOffMapper">
+	<select id="list" resultType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		SELECT
+		    take_off_apply_num
+		  , sem_cnt
+		  , tack_off_type_code
+		  , std_id
+		  , year
+		  , sem_code
+		  , apply_date
+		  , proc_stat_code
+		  , disauth_rsn
+		  , file_gr_num
+		  , auth_doc_num
+		FROM
+		    take_off
+	</select>
+	
+	<insert id="insert" parameterType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		INSERT INTO take_off (
+		    take_off_apply_num
+		  , sem_cnt
+		  , tack_off_type_code
+		  , std_id
+		  , year
+		  , sem_code
+		  , apply_date
+		  , proc_stat_code
+		  , disauth_rsn
+		  , file_gr_num
+		  , auth_doc_num
+		) VALUES (
+		    :v0
+		  ,:v1
+		  ,:v2
+		  ,:v3
+		  ,:v4
+		  ,:v5
+		  ,:v6
+		  ,:v7
+		  ,:v8
+		  ,:v9
+		  ,:v10
+		)
+	</insert>
+	
+</mapper>

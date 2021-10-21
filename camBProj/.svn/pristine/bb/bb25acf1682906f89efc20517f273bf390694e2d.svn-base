@@ -1,0 +1,11 @@
+package kr.or.ddit.student.consult.mapper;
+
+import java.util.List;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.consult.vo.ConsultScheduleVO;
+
+@Mapper("consultMapper")
+public interface ConsultMapper {
+	List<ConsultScheduleVO> selectConsultSchedule();
+}

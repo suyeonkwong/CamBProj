@@ -1,0 +1,65 @@
+package kr.or.ddit.util.auth.vo;
+
+import kr.or.ddit.util.BaseVO.BaseVO;
+
+public class AuthLineStepVO extends BaseVO {
+	
+	private String authLineNum;
+	private String authLineName;
+	private String authLineTypeCode;
+	private String creator;
+	private String updateDate;
+	private String memId;
+	private String memIdList;
+	
+	public String getAuthLineNum() {
+		return authLineNum;
+	}
+	public void setAuthLineNum(String authLineNum) {
+		this.authLineNum = authLineNum;
+	}
+	public String getAuthLineName() {
+		return authLineName;
+	}
+	public void setAuthLineName(String authLineName) {
+		this.authLineName = authLineName;
+	}
+	public String getAuthLineTypeCode() {
+		return authLineTypeCode;
+	}
+	public void setAuthLineTypeCode(String authLineTypeCode) {
+		this.authLineTypeCode = authLineTypeCode;
+	}
+	public String getCreator() {
+		return creator;
+	}
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+	public String getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(String updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public String getMemIdList() {
+		return memIdList;
+	}
+	public void setMemIdList(String memIdList) {
+		this.memIdList = memIdList;
+	}
+	@Override
+	public String toString() {
+		return "AuthLineStepVO [authLineNum=" + authLineNum + ", authLineName=" + authLineName + ", authLineTypeCode="
+				+ authLineTypeCode + ", creator=" + creator + ", updateDate=" + updateDate + ", memId=" + memId
+				+ ", memIdList=" + memIdList + "]";
+	}
+
+	
+}

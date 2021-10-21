@@ -1,0 +1,24 @@
+package kr.or.ddit.util.auth.vo;
+
+public class AuthLineVO {
+	
+	private String authLineNum;
+	private String authLineName;
+	public String getAuthLineNum() {
+		return authLineNum;
+	}
+	public void setAuthLineNum(String authLineNum) {
+		this.authLineNum = authLineNum;
+	}
+	public String getAuthLineName() {
+		return authLineName;
+	}
+	public void setAuthLineName(String authLineName) {
+		this.authLineName = authLineName;
+	}
+	@Override
+	public String toString() {
+		return "AuthLineVO [authLineNum=" + authLineNum + ", authLineName=" + authLineName + "]";
+	}
+	
+}

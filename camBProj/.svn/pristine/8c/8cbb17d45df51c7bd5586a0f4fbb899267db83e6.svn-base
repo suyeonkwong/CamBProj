@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.allNotice.mapper.AllNoticeMapper">
+	<select id="selectAllNoticeList" resultType="allNoticeVO">
+	SELECT EMP_ID
+		,ARTC_NUM
+		,TITLE
+		,CONTENT
+		,WRITE_DATE
+		,FILE_GR_NUM
+		,MOD_DATE
+	FROM GENERAL_NOTICE
+	</select>
+</mapper>

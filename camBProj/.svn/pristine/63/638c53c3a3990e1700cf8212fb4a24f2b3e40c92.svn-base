@@ -1,0 +1,55 @@
+package kr.or.ddit.common.inquiry.controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.common.inquiry.service.InquiryService;
+import kr.or.ddit.common.login.vo.MemberVO;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Controller
+public class InquiryController {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	InquiryService inquiryService;
+	
+	@RequestMapping(value="/common/inquiry/inquiryList", method = RequestMethod.GET)
+	public String inquiryList(Model model, @ModelAttribute MemberVO memberVo)throws Exception {
+		
+//		멤버 목록
+		List<MemberVO> list = this.inquiryService.inquiryList(memberVo);
+		logger.info("list : "+list);
+		model.addAttribute("list", list);
+		
+//		페이징 처리
+		PaginationInfo pagination = new PaginationInfo();
+		pagination.setCurrentPageNo(memberVo.getPageNo());
+		pagination.setRecordCountPerPage(memberVo.getRecordCountPerPage());
+		pagination.setPageSize(memberVo.getPageSize());
+//		pagination.setTotalRecordCount(this.inquiryService.totalMember(memberVo));
+		
+		int lastRecordIndex = pagination.getLastRecordIndex();
+		
+		if(lastRecordIndex > pagination.getTotalRecordCount()) {
+			lastRecordIndex = pagination.getTotalRecordCount();
+		}
+		
+		model.addAttribute("pagination", pagination);
+		model.addAttribute("lastRecordIndex", lastRecordIndex);
+		return "common/inquiry/inquiryList";
+		
+	}
+}

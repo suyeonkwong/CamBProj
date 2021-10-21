@@ -1,0 +1,24 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<script src="/resources/js/jquery.min.js"></script>
+
+<div id="content">
+	<div class="row">
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 mid">
+			<form action="/" method="post">
+				<div>
+					<input type="text" class="input" name="memId" placeholder="아이디">
+				</div>
+				<div>
+					<input type="password" class="input" name="pwd" placeholder="비밀번호">
+				</div>
+				<div>
+					<button type="button" class="loginBtn"></button>
+				</div>
+			</form>
+		</div>
+		<div class="col-sm-4"></div>
+	</div>
+</div>

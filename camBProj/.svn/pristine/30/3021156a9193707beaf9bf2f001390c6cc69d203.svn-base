@@ -1,0 +1,306 @@
+package kr.or.ddit.util.auth.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.takeOff.service.TakeOffService;
+import kr.or.ddit.util.auth.mapper.AuthMapper;
+import kr.or.ddit.util.auth.service.AuthService;
+import kr.or.ddit.util.auth.vo.AuthDetailInfoVO;
+import kr.or.ddit.util.auth.vo.AuthDocFormVO;
+import kr.or.ddit.util.auth.vo.AuthDocVO;
+import kr.or.ddit.util.auth.vo.AuthLineStepVO;
+import kr.or.ddit.util.auth.vo.AuthLineVO;
+import kr.or.ddit.util.auth.vo.AuthStepVO;
+import kr.or.ddit.util.auth.vo.StudentVO;
+import kr.or.ddit.util.auth.vo.TakeOffAndStudentVO;
+
+@Service
+public class AuthServiceImpl implements AuthService{
+	
+	@Autowired
+	AuthMapper authMapper;
+	@Autowired
+	TakeOffService takeOffService;
+	
+	/**
+	 *  AuthLine 결재 라인  
+	 */
+	@Override
+	public List<AuthLineStepVO> authLineList(AuthLineStepVO authLineStepVo) {
+		List<AuthLineStepVO> authLineList = authMapper.authLineList(authLineStepVo);
+		return authLineList;
+	}
+
+	@Override
+	public int authLineTotalCount() {
+		return authMapper.authLineTotalCount();
+	}
+	
+	@Override
+	public List<AuthStepVO> authStepSearch(AuthStepVO authStepVo){
+		return authMapper.authStepSearch(authStepVo);
+	};
+	
+	@Override
+	public int authLineStepInsert(AuthLineStepVO authLineStepVo) {
+		
+		AuthLineVO authLineVo = new AuthLineVO();
+		authLineVo.setAuthLineName(authLineStepVo.getAuthLineName()); // 결재 선 이름
+		authLineVo.setAuthLineTypeCode(authLineStepVo.getAuthLineTypeCode()); // 결재 선 업무 유형
+		authLineVo.setCreator(authLineStepVo.getCreator()); // 결재 선 생성자
+		authMapper.authLineInsert(authLineVo);
+		String authLineNum = authLineVo.getAuthLineNum();
+		
+		String memIdListStr = authLineStepVo.getMemIdList(); // 결재 선 스텝(멤버) 리스트 문자열
+		String[] memIdList = memIdListStr.split("-");
+		System.out.println(">> memIdListStr : " + memIdListStr);
+		System.out.println(">> memIdList : " + memIdList.toString());
+		
+		for(int i=0; i<memIdList.length; i++) {
+			AuthStepVO authStepVo = new AuthStepVO();
+			authStepVo.setAuthLineNum(authLineNum);
+			authStepVo.setMemId(memIdList[i]);
+			authStepVo.setSequence(i+1);
+			
+			int result = authMapper.authStepInsert(authStepVo);
+			if(result <= 0) return 0; // 실패 시 0을 리턴  
+		}
+		return 1;
+	}
+	
+	/**
+	 *  AuthDocForm 결재 문서 양식  
+	 */
+	@Override
+	public AuthDocFormVO authDocFormDetail(String authDocFormNum) {
+		return authMapper.authDocFormDetail(authDocFormNum);
+	}
+	
+	
+	/**
+	 *  AuthDoc 결재 문서
+	 */
+	@Override
+	public String authDocInsert(String authDocFormNum) {
+		
+		AuthDocVO authDocVo = new AuthDocVO();
+		
+		// authDocFormNum에 따라 
+		// memId(기안자)에 다른 값이 들어감
+		AuthDocFormVO authDocFormVo = authMapper.authDocFormDetail(authDocFormNum);
+		String memId = authDocFormVo.getMemId();
+		authDocVo.setMemId(memId);
+		authDocVo.setAuthDocFormNum(authDocFormNum);
+		
+		// insert 작업 후
+		authMapper.authDocInsert(authDocVo);
+		
+		// authDocNum 반환
+		return authDocVo.getAuthDocNum();
+	}
+
+	@Override
+	public List<AuthDocVO> authDocList(AuthDocVO authDocVo) {
+		return authMapper.authDocList(authDocVo);
+	}
+	
+
+	@Override
+	public List<AuthDocVO> authDocListForSteps(AuthDocVO authDocVo) {
+		return authMapper.authDocListForSteps(authDocVo);
+	}
+
+	@Override
+	public int authDocTotalCount(AuthDocVO authDocVo) {
+		return authMapper.authDocTotalCount(authDocVo);
+	}
+
+	@Override
+	public int authDocTotalCountForSteps(AuthDocVO authDocVo) {
+		return authMapper.authDocTotalCountForSteps(authDocVo);
+	}
+
+	@Override
+	public AuthDocVO authDocDetail(String authDocNum) {
+		return authMapper.authDocDetail(authDocNum);
+	}
+
+	@Override
+	public AuthDocVO authDocDetailForSteps(AuthDocVO authDocVo) {
+		return authMapper.authDocDetailForSteps(authDocVo);
+	}
+	
+	@Override
+	public int authDocComplete(String authDocNum) {
+		return authMapper.authDocComplete(authDocNum);
+	}
+	
+	
+	/*
+	 *  조건에 따라 결재 완료 처리
+		마지막 순번이 승인한 경우 (공통) 처리 상태(승인 02, 미승인03), 미승인 사유 업데이트
+		AUTH_DOC_FORM_NUM에 따라... 
+		 1. 휴학 : 학사 상태 휴학(02)으로 업데이트
+		 2. 복학: 학사 상태  재학(01)으로 업데이트
+		 3. 복적재입학 : 학사 상태 재학(01)으로 업데이트
+		 4. 퇴학 : 학사 상태 퇴학06으로 업데이트
+		 5. 이수변경 
+		   1) 전과 : 이수테이블 (CT1) 수정, 학생 테이블 UNIV_DEPT_NUM 수정
+		   2) 복수전공 : 이수테이블 (CT2) 추가/수정/삭제
+		   3) 부전공 : 이수테이블 (CT3) 추가/수정/삭제
+		 6. 봉사 
+		 7. 강의 개설 : 개설 여부 Y,N 수정
+	 */
+	@Override
+	public void authDocCompleteByApplyTypes(AuthDetailInfoVO authDetailInfoVo) {
+		
+		// 결재 문서 번호
+		String authDocNum = authDetailInfoVo.getAuthDocNum();
+		
+		// 신청 유형
+		String applyType = authDocDetail(authDocNum).getAuthDocFormNum();
+		
+		// 미승인을 한 경우 - 결재 완료
+		String disauthRsn = authDetailInfoVo.getDisauthRsn();
+		if("03".equals(authDetailInfoVo.getProcStatCode())) {
+			authDocCompleteByApplyTypesDisauth(authDocNum, applyType, disauthRsn);	// 각 신청 별 미승인 결과 업데이트
+			authDocComplete(authDocNum);  // 결재 문서 - 결재 완료 업데이트
+			return;
+		}
+		
+		// 결재선의 마지막 순번이 아닌 사람이 승인한 경우 - 결재 미완료 
+		int maxSeq = authDetailInfoMaxSeq(authDocNum);
+		if(authDetailInfoVo.getSequence() != maxSeq) {
+			return;
+		}
+		
+		// 결재선의 마지막 순번이 승인한 경우 - 결재 완료
+		authDocComplete(authDetailInfoVo.getAuthDocNum()); 		// 결재 문서 - 결재 완료 업데이트
+		authDocCompleteByApplyTypesAuth(authDocNum, applyType);	// 각 신청 별 미승인 결과 업데이트
+	}
+	
+	// 승인 처리
+	public void authDocCompleteByApplyTypesAuth(String authDocNum, String applyType) {
+		String authCode = "02";
+		if("휴학".equals(applyType)) {						// 각 신청 별 미승인 결과 업데이트
+			TakeOffAndStudentVO takeOffAndStudentVo = authMapper.takeOffDetail(authDocNum);
+			
+			// 휴학 신청 테이블 처리 상태 02로 수정
+			takeOffAndStudentVo.setProcStatCode(authCode);  
+			authMapper.takeOffUpdate(takeOffAndStudentVo);
+			 
+			// 학생 테이블 학사 상태 02로 수정
+			StudentVO studentVo = new StudentVO();
+			studentVo.setAcadStatCode("02");
+			studentVo.setStdId(takeOffAndStudentVo.getStdId());
+			authMapper.studentUpdate(studentVo);
+		}
+	}
+	
+	// 미승인 처리
+	public void authDocCompleteByApplyTypesDisauth(String authDocNum, String applyType, String disauthRsn) {
+		String disauthCode = "03";
+		if("휴학".equals(applyType)) {
+			TakeOffAndStudentVO takeOffAndStudentVo = authMapper.takeOffDetail(authDocNum);
+
+			// 휴학 신청 테이블 처리 상태 03, 미승인 사유 업데이트
+			takeOffAndStudentVo.setProcStatCode(disauthCode);  
+			takeOffAndStudentVo.setDisauthRsn(disauthRsn);
+			authMapper.takeOffUpdate(takeOffAndStudentVo);
+		}
+	}
+	
+	/**
+	 * 기안자가 결재 문서 승인한 후, 결재선(결재자 정보)를 등록  
+	 */
+	@Override
+	public int authDocUpdateAndAuthDetailInfoInsert(AuthDocVO authDocVo) {
+		
+		System.out.println(">> serv : " + authDocVo );
+		// 1. 결재 문서를 승인
+		authMapper.authDocUpdate(authDocVo);
+		String authDocNum = authDocVo.getAuthDocNum();
+		String authLineNum = authDocVo.getAuthLineNum(); 
+		
+		int result = authMapper.authDocUpdate(authDocVo);
+		System.out.println(">> result1 authDocVo : " +authDocVo );
+		System.out.println(">> result1 : " +result );
+		
+		if(result <= 0) {
+			return 0;
+		}
+		
+		// 2. 결재자 정보를 등록
+		List<AuthDetailInfoVO> authDetailInfoVoList = new ArrayList<>();
+		List<AuthStepVO> stepList = authMapper.authStepList(authLineNum);
+		for(AuthStepVO authStepVo: stepList) {
+			AuthDetailInfoVO authDetailInfoVo = new AuthDetailInfoVO();
+			authDetailInfoVo.setAuthDocNum(authDocNum);
+			authDetailInfoVo.setAuthLineNum(authLineNum);
+			authDetailInfoVo.setMemId(authStepVo.getMemId());
+			authDetailInfoVo.setProcStatCode("01");
+			authDetailInfoVoList.add(authDetailInfoVo);
+		}
+		result = authMapper.authDetailInfoInsert(authDetailInfoVoList);
+		System.out.println(">> result2 authDetailInfoVoList: " +authDetailInfoVoList );
+		System.out.println(">> result2 : " +result );
+		
+		if(result <= 0) {
+			return 0;
+		}else {
+			return 1;
+		}
+	}
+
+	@Override
+	public int authDetailInfoInsert(List<AuthDetailInfoVO> authDetailInfoVoList) {
+		return authMapper.authDetailInfoInsert(authDetailInfoVoList);
+	}
+
+	@Override
+	public int authDocUpdateForSteps(AuthDetailInfoVO authDetailInfoVo) {
+		return authMapper.authDocUpdateForSteps(authDetailInfoVo);
+	}
+	
+	@Override
+	public List<AuthDetailInfoVO> authDetailInfoList(String authDocNum) {
+		return authMapper.authDetailInfoList(authDocNum);
+	}
+	
+	@Override
+	public AuthDetailInfoVO authDetailInfoDetail(AuthDetailInfoVO authDetailInfoVo) {
+		return authMapper.authDetailInfoDetail(authDetailInfoVo);
+	}
+	
+	@Override
+	public int authDetailInfoMaxSeq(String authDocNum) {
+		return authMapper.authDetailInfoMaxSeq(authDocNum);
+	}
+
+	/**
+	 * AuthDoc 결재 문서에 필요한 신청 정보 가져오는 쿼리
+	 */
+	@Override
+	public TakeOffAndStudentVO takeOffDetail(String authDocNum) {
+		TakeOffAndStudentVO takeOffAndStudentVo = authMapper.takeOffDetail(authDocNum);
+		
+		// endYearSem 정보 입력
+		int year = Integer.parseInt(takeOffAndStudentVo.getYear());
+		String sem = takeOffAndStudentVo.getSemCode();
+		int semCnt = takeOffAndStudentVo.getSemCnt();
+		String endYearSem = takeOffService.getEndYearSem(year, sem, semCnt);
+		takeOffAndStudentVo.setEndYearSem(endYearSem);
+		
+		return takeOffAndStudentVo;
+	}
+
+
+
+
+
+	
+}

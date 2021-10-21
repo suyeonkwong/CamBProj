@@ -1,0 +1,14 @@
+package kr.or.ddit.student.dorm.service;
+
+import java.util.List;
+
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+
+public interface DormService {
+
+	//생활관신청할때 room전체 정보 불러오기
+	List<DormRoomVO> selectDormRoom(String buildCode);
+	//건물코드만 가져오기
+	List<DormRoomVO> selectBuildCode();
+
+}

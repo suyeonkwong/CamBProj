@@ -1,0 +1,61 @@
+package kr.or.ddit.professor.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@Controller
+public class ProfessorController {
+	
+	private static Logger logger = LoggerFactory.getLogger(ProfessorController.class);
+	
+	@RequestMapping("/professor/list.do")
+	public String proList() {
+		return "professor/study/list";
+	}
+	@RequestMapping("/professor/detail.do")
+	public String proDetail() {
+		return "professor/study/detail";
+	}
+	@RequestMapping("/professor/update.do")
+	public String proUpdate() {
+		return "professor/study/update";
+	}
+	@RequestMapping("/professor/insert.do")
+	public String proInsert() {
+		return "professor/study/insert";
+	}
+	@RequestMapping("/professor/attendance/list.do")
+	public String proAtendList() {
+		return "professor/attendance/list";
+	}
+	@RequestMapping("/professor/grade/list.do")
+	public String proGradeList() {
+		return "professor/grade/list";
+	}
+	@RequestMapping("/professor/study/lectureEvaluationList.do")
+	public String lectureEvaluationList() {
+		return "professor/study/lectureEvaluationList";
+	}
+	@RequestMapping("/professor/study/lectureEvaluationDetail.do")
+	public String lectureEvaluationDetail() {
+		return "professor/study/lectureEvaluationDetail";
+	}
+	@RequestMapping("/professor/consulting/consultingList.do")
+	public String consultingList() {
+		return "professor/consulting/consultingList";
+	}
+	@RequestMapping("/professor/salary/salaryList.do")
+	public String salaryList() {
+		return "professor/salary/salaryList";
+	}
+	@RequestMapping("/professor/academic/academicList.do")
+	public String academicList() {
+		return "professor/academic/academicList";
+	}
+	
+	
+	
+}

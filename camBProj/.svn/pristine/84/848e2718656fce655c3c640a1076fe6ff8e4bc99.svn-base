@@ -1,0 +1,138 @@
+package kr.or.ddit.professor.lecture.controller;
+
+
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.professor.lecture.service.LectureService;
+import kr.or.ddit.professor.lecture.vo.LectureOpenVO;
+import kr.or.ddit.professor.lecture.vo.LectureRoomVO;
+import kr.or.ddit.student.volunteer.vo.VolunteerVO;
+
+@Controller
+public class LectureController {
+	
+	@Autowired
+	LectureService lectureService; 
+	
+	private static Logger logger = LoggerFactory.getLogger(LectureController.class);
+	
+	@RequestMapping(value = "/professor/list", method = RequestMethod.GET)
+	public String proList(Model model,@RequestParam(defaultValue = "1") String pageNo,
+			@RequestParam Map<String, Object> map) {
+		logger.info("map : "+map);
+		if(map.get("pageNo")==null) {
+			logger.info("pageNo null");
+			map.put("pageNo", "1");
+		}
+		if(map.get("selectYear")==null) {
+			logger.info("selectYear null");
+			map.put("selectYear", "");
+		}
+		if(map.get("selectSemester")==null) {
+			logger.info("selectSemester null");
+			map.put("selectSemester", "");
+		}
+		if(map.get("searchKeyword")==null) {
+			logger.info("searchKeyword null");
+			map.put("searchKeyword", "");
+		}
+		logger.info("map2 : "+map);
+
+		List<LectureOpenVO> list = this.lectureService.selectLectureList(map);
+		
+		
+		model.addAttribute("list", list);
+		logger.info("리스트 모델 : " + model);
+		PaginationInfo paginationInfo = new PaginationInfo();
+		logger.info("count >>>>>>" + paginationInfo.getTotalRecordCount());
+		int totalCount = this.lectureService.selectCount(map);
+		paginationInfo.setTotalRecordCount(totalCount); // 전체 행의 수
+		paginationInfo.setCurrentPageNo(Integer.parseInt(pageNo)); // 현재 페이지
+		paginationInfo.setRecordCountPerPage(5); // 한 페이지 당 행의 수 
+		paginationInfo.setPageSize(5); // 페이징 크기
+		
+		model.addAttribute("paginationInfo", paginationInfo);
+		return "professor/study/list";
+	}
+	
+	@RequestMapping("/professor/study/lectureRoom/lectureRoomList")
+	public String lectureRoomList(Model model, @ModelAttribute LectureRoomVO lectureRoomVO) {
+		
+		if(lectureRoomVO.getBuildCode()==null) {
+			logger.info("BuildCode null");
+			lectureRoomVO.setBuildCode("");
+		}
+		if(lectureRoomVO.getRoomNum()==null) {
+			logger.info("RoomNum null");
+			lectureRoomVO.setRoomNum("");
+		}
+		
+		logger.info("lectureRoomVO.getBuildCode() : " +lectureRoomVO.getBuildCode());
+		logger.info("lectureRoomVO.getRoomNum() : " +lectureRoomVO.getRoomNum());
+		
+		List<LectureRoomVO> lectRoom = this.lectureService.searchLectRoom(lectureRoomVO);
+		model.addAttribute("lectRoom", lectRoom);
+		
+		return "professor/study/lectureRoom/lectureRoomList";
+	}
+	
+	@RequestMapping("/professor/detail")
+	public String proDetail(@RequestParam String lectOpenNum, Model model) {
+		logger.info("디테일 lectOpenNum : " + lectOpenNum);
+		
+		LectureOpenVO lectureOpenVO = this.lectureService.detailLectureOpen(lectOpenNum);
+		model.addAttribute("lectureOpenVO",lectureOpenVO);
+		logger.info("model : " + model);
+		return "professor/study/detail";
+	}
+	
+	
+	@RequestMapping("/professor/study/update")
+	public String lectureUpdate(@ModelAttribute LectureOpenVO lectureOpenVO) {
+		
+		logger.info("업데이트 lectureOpenVO.getLectOpenNum() : " + lectureOpenVO);
+		int result = this.lectureService.updateLecture(lectureOpenVO);
+		String status = "";
+		if(result>0) {//수정 완료
+			status = "ok";
+		}else {//수정 실패
+			status = "fail";
+		}
+		
+		return "redirect:/professor/detail?lectOpenNum="+lectureOpenVO.getLectOpenNum()+"&result="+status;
+	}
+	
+	
+	@RequestMapping("/professor/currentList")
+	public String currentList() {
+		return "professor/study/currentList";
+	}
+	
+	@RequestMapping("/professor/study/lectureEvaluationList")
+	public String lectureEvaluationList() {
+		return "professor/study/lectureEvaluationList";
+	}
+	
+
+	@RequestMapping("/professor/study/lectureEvaluationDetail")
+	public String lectureEvaluationDetail() {
+		return "professor/study/lectureEvaluationDetail";
+	}
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,18 @@
+package kr.or.ddit.student.dorm.mapper;
+
+import java.util.List;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+import kr.or.ddit.student.dorm.vo.DormVO;
+
+@Mapper("dormMapper")
+public interface DormMapper {
+	
+	//생활관 신청할때 생활관room정보를 알아야 select박스로 사용함.
+	List<DormRoomVO>  selectDormRoom(String buildCode);
+	//건물코드만 가져오기
+	List<DormRoomVO> selectBuildCode();
+	//기숙사 신청하기
+	int DromApply(DormVO dormVO);
+}

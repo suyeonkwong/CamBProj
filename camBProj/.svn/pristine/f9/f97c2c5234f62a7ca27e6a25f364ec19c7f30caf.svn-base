@@ -1,0 +1,86 @@
+package kr.or.ddit.student.takeOff.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.student.takeOff.mapper.TakeOffMapper;
+import kr.or.ddit.student.takeOff.service.TakeOffService;
+import kr.or.ddit.student.takeOff.vo.TakeOffVO;
+
+@Service
+public class TakeOffServiceImpl implements TakeOffService{
+
+	@Autowired
+	TakeOffMapper takeOffMapper;
+	
+	@Override
+	public List<TakeOffVO> takeOffApplyList (Map<String, Object> map) {
+		 List<TakeOffVO> list = takeOffMapper.takeOffApplyList(map);
+		 List<TakeOffVO> resultList = new ArrayList<>();
+		// 휴학 학기 수로 휴학 종료 예정 학기를 계산하기 ("2021-1학기" 형식)
+		for(TakeOffVO takeOffVo : list) {
+			int semCnt = takeOffVo.getSemCnt();
+			String sem = takeOffVo.getSemCode();
+			int year = Integer.parseInt(takeOffVo.getYear());
+			for(int i=0; i<semCnt; i++) {
+				if(sem == "1학기") {
+					sem = "2학기";
+				}else {
+					year += 1;
+					sem = "1학기";
+				}
+			}
+			String endYearSem = year + "-" +sem;
+			takeOffVo.setEndYearSem(endYearSem);
+			resultList.add(takeOffVo);
+		}
+		
+		return resultList;
+	}
+
+	@Override
+	public int takeOffApplyTotalCount() {
+		return takeOffMapper.takeOffApplyTotalCount();
+	}
+
+	@Override
+	public TakeOffVO takeOffApplyDetail(String takeOffApplyNum) {
+		return takeOffMapper.takeOffApplyDetail(takeOffApplyNum);
+	}
+
+	@Override
+	public int takeOffApply(TakeOffVO takeOffVo) {
+		int affectedRows = takeOffMapper.takeOffApply(takeOffVo);
+		if(affectedRows > 0) {
+			return 1; // 성공 시 
+		}else {
+			return 0; // 실패 시
+		}
+	}
+
+	@Override
+	public int takeOffApplyUpdate(TakeOffVO takeOffVo) {
+		int affectedRows = takeOffMapper.takeOffApplyUpdate(takeOffVo);
+		if(affectedRows > 0) {
+			return 1; // 성공 시 
+		}else {
+			return 0; // 실패 시
+		}
+	}
+
+	@Override
+	public int takeOffApplyDelete(String takeOffApplyNum) {
+		int affectedRows = takeOffMapper.takeOffApplyDelete(takeOffApplyNum);
+		if(affectedRows > 0) {
+			return 1; // 성공 시 
+		}else {
+			return 0; // 실패 시
+		}
+	}
+
+	
+}

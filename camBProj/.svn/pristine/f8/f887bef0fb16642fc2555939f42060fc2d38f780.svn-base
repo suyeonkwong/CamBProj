@@ -1,0 +1,64 @@
+package kr.or.ddit.common.allNotice.vo;
+
+import java.util.Date;
+
+public class AllNoticeVO {
+
+	private String empId;
+	private String artcNum;
+	private String title;
+	private String content;
+	private Date writeDate;
+	private String fileGrNum;
+	private Date modDate;
+	public String getEmpId() {
+		return empId;
+	}
+	public void setEmpId(String empId) {
+		this.empId = empId;
+	}
+	public String getArtcNum() {
+		return artcNum;
+	}
+	public void setArtcNum(String artcNum) {
+		this.artcNum = artcNum;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public Date getWriteDate() {
+		return writeDate;
+	}
+	public void setWriteDate(Date writeDate) {
+		this.writeDate = writeDate;
+	}
+	public String getFileGrNum() {
+		return fileGrNum;
+	}
+	public void setFileGrNum(String fileGrNum) {
+		this.fileGrNum = fileGrNum;
+	}
+	public Date getModDate() {
+		return modDate;
+	}
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
+	}
+	
+	@Override
+	public String toString() {
+		return "allNotice [empId=" + empId + ", artcNum=" + artcNum + ", title=" + title + ", content=" + content
+				+ ", writeDate=" + writeDate + ", fileGrNum=" + fileGrNum + ", modDate=" + modDate + "]";
+	}
+	
+	
+}

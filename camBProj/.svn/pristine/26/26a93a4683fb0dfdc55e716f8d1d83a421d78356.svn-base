@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.student.takeOff.mapper.TakeOffMapper">
+
+	<select id="list" parameterType="hashMap" resultType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		<![CDATA[
+			SELECT * 
+			FROM (SELECT ROW_NUMBER() OVER (ORDER BY apply_date DESC) rnum
+				  , take_off_apply_num
+				  , sem_cnt
+				  , fn_get_code_name('TAK_OFF', take_off_type_code) take_off_type_code
+				  , std_id
+				  , year
+				  , fn_get_code_name('SEM_COD', sem_code) sem_code
+				  , TO_CHAR(apply_date, 'yyyy-mm-dd') apply_date
+				  , fn_get_code_name('PRO_STA', proc_stat_code) proc_stat_code
+				  , disauth_rsn
+				  , file_gr_num
+				  , auth_doc_num
+				FROM
+				    take_off
+				    ) t
+			WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)	 
+		]]>   
+	</select>
+	
+	<select id="totalCount" resultType="int">
+		<![CDATA[
+			SELECT
+			    COUNT(take_off_apply_num)
+			FROM
+			    take_off
+	    ]]>
+	</select>
+	
+	<select id="detail" parameterType="String" resultType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		SELECT
+		    take_off_apply_num
+		  , sem_cnt
+		  , take_off_type_code
+		  , std_id
+		  , year
+		  , sem_code
+		  , TO_CHAR(apply_date, 'yyyy-mm-dd') apply_date
+		  , proc_stat_code
+		  , disauth_rsn
+		  , file_gr_num
+		  , auth_doc_num
+		FROM
+		    take_off
+		WHERE take_off_apply_num = #{takeOffApplyNum}
+	</select>
+	
+	<insert id="apply" parameterType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		<selectKey order="BEFORE" keyProperty="takeOffApplyNum" resultType="String">
+				SELECT  NVL(MAX(take_off_apply_num), TO_CHAR(SYSDATE, 'yyyyMM') || '000') + 1 
+				FROM 	take_off
+				WHERE 	SUBSTR(take_off_apply_num, 1, 6) = TO_CHAR(SYSDATE, 'yyyyMM')
+		</selectKey>
+			INSERT INTO take_off (
+			    take_off_apply_num
+			  , sem_cnt
+			  , take_off_type_code
+			  , std_id
+			  , year
+			  , sem_code
+			  , apply_date
+			  , proc_stat_code
+			  , file_gr_num
+			) VALUES (
+			  #{takeOffApplyNum}
+			  ,#{semCnt}
+			  ,#{takeOffTypeCode}
+			  ,#{stdId}
+			  ,#{year}
+			  ,#{semCode}
+			  ,SYSDATE
+			  ,#{procStatCode}
+			  ,#{fileGrNum, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<insert id="update" parameterType="kr.or.ddit.student.takeOff.vo.TakeOffVO">
+		UPDATE take_off
+		    SET
+		        sem_cnt = #{semCnt}
+		        ,take_off_type_code = #{takeOffTypeCode}
+		        ,file_gr_num = #{fileGrNum, jdbcType=VARCHAR}
+		WHERE
+		    take_off_apply_num = #{takeOffApplyNum}
+	</insert>
+	
+	<delete id="delete" parameterType="String">
+		DELETE FROM take_off
+		WHERE
+		    take_off_apply_num = #{takeOffApplyNum}
+	</delete>
+	
+</mapper>

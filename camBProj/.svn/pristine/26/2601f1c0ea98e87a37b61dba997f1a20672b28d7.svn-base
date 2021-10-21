@@ -1,0 +1,11 @@
+package kr.or.ddit.student.dorm.mapper;
+
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
+import kr.or.ddit.student.dorm.vo.DormRoomVO;
+
+@Mapper("dormMapper")
+public interface DormMapper {
+	
+	//생활관 신청할때 생활관room정보를 알아야 select박스로 사용함.
+	DormRoomVO  selectDormRoom();
+}

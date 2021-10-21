@@ -1,0 +1,121 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<style>
+	tbody tr:hover{
+		background-color: #F4F5F9;
+	}
+</style>
+<body>
+	<div class="card shadow mb-4" style="width: 98%;">
+		<div class="card-header py-3">
+		<h6 class="m-0 font-weight-bold text-primary" style="cursor: pointer;" onclick="javascript:location.href='/professor/currentList'">현재 학기 강의 목록</h6>
+		</div>
+		<div class="card-body">
+			<div class="table-responsive">
+				<div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4" style="width: 99%">
+					<div class="row">
+						<div class="col-sm-12 col-md-6">
+							<div class="dataTables_length" id="dataTable_length">
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%; text-align: center;">
+								<thead>
+									<tr role="row">
+										<th class="sorting sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 88px;">
+											학수번호
+										</th>
+										<th class="sorting sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 88px;">
+											강의실
+										</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 126px;">
+											강의명
+										</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 66px;">
+											강의 시간
+										</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 31px;">
+											수강 인원
+										</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 31px;">
+											년도/학기
+										</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 31px;">
+											승인 여부
+										</th>
+									</tr>
+								</thead>
+								
+								<tbody>
+									<tr style="cursor: pointer;" onclick="javascript:location.href='/professor/detail'">								
+										<td>19740</td>									
+										<td>090501</td>									
+										<td>게임설계 및 실습I</td>									
+										<td>월E,화A</td>									
+										<td>35</td>									
+										<td>21/2</td>									
+										<td>승인</td>									
+									</tr>
+									<tr style="cursor: pointer;" onclick="javascript:location.href='/professor/detail'">								
+										<td>19740</td>
+										<td>090511</td>									
+										<td>게임설계 및 실습II</td>									
+										<td>수E,화B</td>									
+										<td>30</td>									
+										<td>21/2</td>									
+										<td>대기</td>									
+									</tr>
+									<tr style="cursor: pointer;" onclick="javascript:location.href='/professor/detail'">
+										<td>19741</td>									
+										<td>090501</td>									
+										<td>자산 불리기</td>									
+										<td>월E,화A</td>									
+										<td>35</td>									
+										<td>20/여름</td>									
+										<td>대기</td>									
+									</tr>
+									<tr style="cursor: pointer;" onclick="javascript:location.href='/professor/detail'">		
+										<td>19745</td>						
+										<td>110802</td>									
+										<td>주식잘하는 법</td>									
+										<td>월E,화A</td>									
+										<td>35</td>									
+										<td>20/1</td>									
+										<td>승인</td>									
+									</tr>
+									<tr style="cursor: pointer;" onclick="javascript:location.href='/professor/detail'">
+										<td>19752</td>									
+										<td>090501</td>									
+										<td>현대인과 성서</td>									
+										<td>목78,화78</td>									
+										<td>35</td>									
+										<td>20/1</td>									
+										<td>대기</td>									
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-md-5">
+
+						</div>
+					</div>
+						<div class="row" style=" float: right;">
+							<a href="/professor/insert" class="btn btn-primary btn-icon-split" > 
+								<span class="text">강의 신청</span>
+							</a>
+						</div>		
+				</div>
+			</div>
+		</div>		
+	</div>
+
+</body>
+</html>

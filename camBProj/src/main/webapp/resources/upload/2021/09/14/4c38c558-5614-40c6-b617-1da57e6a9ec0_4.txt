@@ -1,0 +1,11 @@
+리터럴은 값 자체를 의미
+W/A(add) > stage(commit) > L/R(push) == > Git
+R/R == > Git hub
+BETWEEN 연산자 AND연산자
+키워드는 대소문자를 가리지 않지만 데이터는 대소문자를 가리기 때문에 주의 하기!!
+IN연산자
+검색 '%', '_'
+null에 대해 비교연산 할경우에는 '='  사용 불가 하고 IS연산자를 사용해야 함. (IS NOT)
+0과 null은 다름.
+null은 IN과 못쓰고 무조건 IS
+NOT IN과 IN 의 해석 매우 중요 시험!!

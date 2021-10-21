@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.admin.member.mapper.MemberMapper">
+	<select id="selectMemberList" parameterType="kr.or.ddit.admin.member.vo.MemberVO" resultType="kr.or.ddit.admin.member.vo.MemberVO">
+		SELECT T.* 
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY mem_id DESC) rnum
+			  , mem_id
+			  , file_gr_num
+			  , pwd
+			  , name
+			  , ph_num
+			  , addr
+			  , addr_detail
+			  , zipcode
+			  , email
+			  , pwd_err_cnt
+			  , alert_use_yn
+			  , res_rgst_num
+			  , gen
+			  , del_yn
+			  , del_date
+			  , FN_GET_CODE_NAME('BAN_COD', BANK_CODE) BANK_CODE
+			  , bank_accnt_num
+			  , FN_GET_CODE_NAME('MEM_TYP', MEM_TYPE_CODE) MEM_TYPE_CODE
+			  , FN_GET_CODE_NAME('DEL_TYP', DEL_TYPE_CODE) DEL_TYPE_CODE
+			  , create_date
+			  , mod_date
+			FROM
+			    member
+			WHERE 
+			    del_yn != 'Y'    
+			    <choose>
+					<when test="searchCondition!='' and 'all'.equals(searchCondition)">
+						AND mem_id || name LIKE '%' || #{searchKeyword} || '%'
+					</when>
+					<otherwise>
+						<if test="searchCondition!='' and 'memId'.equals(searchCondition)">
+							AND   mem_id LIKE '%' || #{searchKeyword} || '%'
+						</if>
+						<if test="searchCondition!='' and 'name'.equals(searchCondition)">
+							AND   name LIKE '%' || #{searchKeyword} || '%'
+						</if>
+					</otherwise>
+				</choose>
+			) T	
+			WHERE T.rnum BETWEEN #{pageNo} * #{pageSize} - (#{pageSize}-1) AND #{pageNo} * #{pageSize}
+	</select>
+	
+	<!-- 멤버 인원수 -->
+	<select id="totalMember" parameterType="kr.or.ddit.admin.member.vo.MemberVO" resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE del_yn != 'Y'
+			<choose>
+				<when test="searchCondition!='' and 'all'.equals(searchCondition)">
+					AND mem_id || name LIKE '%' || #{searchKeyword} || '%'
+				</when>
+				<otherwise>
+					<if test="searchCondition!='' and 'memId'.equals(searchCondition)">
+						AND   mem_id LIKE '%' || #{searchKeyword} || '%'
+					</if>
+					<if test="searchCondition!='' and 'name'.equals(searchCondition)">
+						AND   name LIKE '%' || #{searchKeyword} || '%'
+					</if>
+				</otherwise>
+			</choose>
+	</select>
+	
+	<insert id="insertMember" parameterType="kr.or.ddit.admin.member.vo.MemberVO">
+		<selectKey keyProperty="memId" order="BEFORE" resultType="String" >
+			SELECT MAX(NVL(TO_NUMBER(mem_id), 0)) + 1
+  			FROM member
+		</selectKey>	
+		INSERT INTO member (
+		    mem_id
+		  , pwd
+		  , name
+		  , ph_num
+		  , pwd_err_cnt
+		  , alert_use_yn
+		  , res_rgst_num
+		  , gen
+		  , mem_type_code
+		  , create_date
+		  , del_yn
+		) VALUES (
+		    #{memId}
+		  ,'1234'
+		  , #{name}
+		  , #{phNum}
+		  , 0
+		  ,'Y'
+		  , #{resRgstNum}
+		  , #{gen}
+		  , #{memTypeCode}
+		  , SYSDATE
+		  , 'N'
+		)
+	</insert>
+	
+	<select id="detailMember" parameterType="String" resultType="kr.or.ddit.admin.member.vo.MemberVO">
+		SELECT
+		    mem_id
+		  , file_gr_num
+		  , pwd
+		  , name
+		  , ph_num
+		  , addr
+		  , addr_detail
+		  , zipcode
+		  , email
+		  , pwd_err_cnt
+		  , alert_use_yn
+		  , res_rgst_num
+		  , gen
+		  , del_yn
+		  , del_date
+		  , FN_GET_CODE_NAME('BAN_COD', BANK_CODE) BANK_CODE
+		  , bank_accnt_num
+		  , FN_GET_CODE_NAME('MEM_TYP', MEM_TYPE_CODE) MEM_TYPE_CODE
+		  , FN_GET_CODE_NAME('DEL_TYP', DEL_TYPE_CODE) DEL_TYPE_CODE
+		  , create_date
+		  , mod_date
+		FROM
+		    member
+		WHERE
+		    mem_id = #{memId}
+		AND del_yn != 'Y'
+	</select>
+	
+	<update id="updateMember">
+		UPDATE member
+	    SET
+		    name = #{name}
+		    ,  ph_num = #{phNum}
+		    ,  res_rgst_num = #{resRgstNum}
+		    ,  gen = #{gen}
+		    ,  mod_date = SYSDATE
+		WHERE
+			mem_id = #{memId}
+	</update>
+	
+	<update id="deleteMember">
+		UPDATE member
+	    SET
+	        del_yn = 'Y'
+	        , del_date = SYSDATE
+	        , del_type_code = '02'
+		WHERE
+		    mem_id = #{memId}
+	</update>
+	
+</mapper>

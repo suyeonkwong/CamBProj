@@ -1,0 +1,74 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div id="body" style="height: 600px;">
+
+	<div class="card shadow mb-4" style="margin-top:20px;">
+		<div class="card-header py-3">
+			<h6 class="m-0 font-weight-bold text-primary">결재 선 설정</h6>
+		</div>
+		
+		<div class="card-body">
+			<div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4" >
+				
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="결재 선 검색" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+				
+				<table class="table table-bordered dataTable" id="dataTable" style="width: 100%;" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+					<colgroup>
+						<col width= "200px;">
+						<col width= "120px;">
+						<col width= "auto;">
+					</colgroup>
+					<thead>
+						<tr role="row">
+							<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">결재 선 번호</th>
+							<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">결재 종류</th>
+							<th tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1">결재 스텝</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr onclick="setValue(this);" class="trClick">
+							<td>결재 선 번호</td>
+							<td>결재 종류</td>
+							<td>결재 스텝</td>
+						</tr>
+					</tbody>
+				</table>
+		
+				<div class="text-right">
+					<!-- 검색하는 창에서는 생성할 수 없음 -->
+<!-- 					<button type="button" class="btn btn-primary" id="btnCreate">생성</button> -->
+					<button type="button" class="btn btn-light" id="btnCancel">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="/resources/js/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/ddit.min.js"></script>
+<script>
+
+	$(function() {
+		$("#btnCancel").on("click", function() {
+			self.close();
+		});
+	});
+	
+	function setValue(tr) {
+		var tdList = $(tr).children('td');
+		var authLineNum = $(tdList[0]).text();
+		var authLineStep = $(tdList[2]).html();
+		opener.document.getElementById("authLineNum").value = authLineNum;
+		opener.document.getElementById("authLineStep").innerHTML = authLineStep;
+		self.close();
+	}
+</script>

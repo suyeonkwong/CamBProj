@@ -1,0 +1,77 @@
+1. 폴더안에 .git 이라는 폴더가 존재해야 형상관리로 인식이된다
+ ==> 초기화
+
+working area(gitTest)
+
+.git(staging area / local repository)
+
+remote repository (github)
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+JDK자바 개발 도구 설치 
+
+수업엔7버전 데.베 수업에8버전 둘다 설치
+
+오라클사이트 에서 JDK 설치
+
+설치때 한글 경로로는 오류뜨는 프로그램들이 있으므로 한글경로는 넣지 않는게 좋음
+
+환경변수(경로에 상관없이 등록을 하게 해줌, 위치에 상관없이 아무데서나 프로그램을
+실행 가능하게 함.)
+내피씨-속성-고급 시스템 설정-환경변수-변수 등록 JAVA_HOME
+path편집 %JAVA_HOME%\bin 이름으로 추가
+글을 컴파일(사람의 언어를 컴퓨터가 알아듣게 0과1로 번역하는 과정)하기
+javac(컴파일러)
+java Hello 실행
+무료로 java를 사용하게 해주는 eclipse설치
+eclipse.org에서 받기-Older Versions설치-kepler-SR2-Packges-EE(웹개발 사용)
+실행파일, 환경설정 파일 있는데 환경설정 파일 편집
+마지막 줄 Xms40m~Xmx512m 까지 용량을 주겠다고 설정 되어있는것을 둘다 1024로 변경
+실행파일 보내기-바탕화면에 보내기
+실행-workspace(위치결정)의 경로를 설정(D-drive-A-1-workspace)
+ecplipse실행-Open Perspective에서 EE를 java로 변경-window-preferences-encoding(문자를
+표현하는 방법, 숫자와 문자를 연결해서 표현)검색-content types-UTF업데이트(4개 모두)-이외 환경설정
+src -우리가 쓴 파일
+bin -컴파일 된 파일
+
+
+데이터베이스 설치
+D드라이브-B-1-오라클-server,client둘다 설치
+오라클 사이트 에서 설치
+개발자-오라클다운로드-오라클 데이터베이스 11g Release 2 Express Edition for windows 64
+
+SQL developer설치
+도구-sql developer개요
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

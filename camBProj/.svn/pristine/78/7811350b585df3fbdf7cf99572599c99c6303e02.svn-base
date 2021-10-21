@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.util.auth.mapper.AuthMapper">
+	
+	<!--** AuthLine 결재 라인 쿼리 *************************************************************************************-->
+	<!-- 값이 여러 개 리턴 -->
+	<select id="authLineList" parameterType="hashMap" resultType="kr.or.ddit.util.auth.vo.AuthLineStepVO">
+		SELECT tt.rnum, tt.auth_line_num, tt.auth_line_name, tt.mem_id
+			FROM 
+				(SELECT ROWNUM rnum, t.auth_line_num, t.auth_line_name, t.mem_id
+				 FROM
+					(SELECT l.auth_line_num
+							, l.auth_line_name
+							, LISTAGG((s.mem_id), '-') WITHIN GROUP (ORDER BY s.sequence) AS mem_id
+					 FROM
+						auth_line l, auth_step s
+					 WHERE 
+						l.auth_line_num = s.auth_line_num
+					 GROUP BY 
+					 	l.auth_line_num, l.auth_line_name) t) tt
+			WHERE 
+				tt.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+			ORDER BY 
+				tt.rnum DESC
+	</select>
+	
+	<select id="authLineTotalCount" resultType="int">
+		SELECT
+		    COUNT(auth_line_num)
+		FROM
+		    auth_line 
+	</select>
+	
+	<insert id="authLineInsert" parameterType="kr.or.ddit.util.auth.vo.AuthLineVO">
+		<selectKey order="BEFORE" keyProperty="authLineNum" resultType="String">
+			SELECT  NVL(MAX(auth_line_num), TO_CHAR(SYSDATE, 'yyyyMM') || '000') + 1 
+			FROM 	auth_line
+			WHERE 	SUBSTR(auth_line_num, 1, 6) = TO_CHAR(SYSDATE, 'yyyyMM')
+		</selectKey>
+		INSERT INTO auth_line (
+		    auth_line_num
+		  , auth_line_name
+		) VALUES (
+		    #{authLineNum}
+		  , #{authLineName}
+		)
+	</insert>
+
+	<insert id="authStepInsert" parameterType="kr.or.ddit.util.auth.vo.AuthStepVO">
+		INSERT INTO auth_step (
+		    auth_line_num
+		  , mem_id
+		  , sequence
+		) VALUES (
+		    #{authLineNum}
+		  , #{memId}
+		  , #{sequence}
+		)
+	</insert>
+	<!--***********************************************************************************************************-->
+	
+	
+	
+	<!--** AuthDocForm 결재 문서 양식 쿼리 ***********************************************************************************-->
+	<!-- 결재 문서 양식 가져오기 -->
+	<select id="authDocFormDetail" parameterType="String" resultType="kr.or.ddit.util.auth.vo.AuthDocFormVO">
+		SELECT
+		    auth_doc_form_num
+		  , auth_doc_form_name
+		  , auth_doc_form
+		FROM
+		    auth_document_format
+		WHERE
+			auth_doc_form_num = '01'
+	</select>
+	
+	<!--**********************************************************************************************************-->
+	
+
+
+	<!--** AuthDoc 결재 문서 쿼리 *************************************************************************************-->
+	<!-- 결재 문서 생성하기 -->
+	<insert id="authDocInsert" parameterType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		<selectKey order="BEFORE" keyProperty="authDocNum" resultType="String">
+			SELECT  NVL(MAX(auth_doc_num), TO_CHAR(SYSDATE, 'yyyyMM') || '00000') + 1 
+			FROM 	auth_document
+			WHERE 	SUBSTR(auth_doc_num, 1, 6) = TO_CHAR(SYSDATE, 'yyyyMM')
+		</selectKey>
+		INSERT INTO auth_document (
+		    auth_doc_form_num
+		  , auth_doc_num
+		  , mem_id
+		  , file_gr_num
+		) VALUES (
+		    #{authDocFormNum}
+		  ,#{authDocNum}
+		  ,#{memId}
+		  ,#{fileGrNum}
+		)
+	</insert>
+	
+	<!-- 결재 리스트 가져오기 -->
+	<select id="authDocList" parameterType="hashMap" resultType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		SELECT * 
+		FROM (SELECT ROW_NUMBER() OVER (ORDER BY auth_doc_num DESC) rnum
+			    , auth_doc_form_num
+			    , auth_doc_num
+			    , auth_line_num
+			    , mem_id
+			    , file_gr_num
+			    , rcp_code
+			    , title
+			    , content
+			    , rcp_date
+			    , auth_stat_code
+			  FROM
+			      auth_document
+			  WHERE 
+			  	  mem_id = #{memId} ) t
+		WHERE t.rnum BETWEEN (#{pageNo} * 5 - 4) AND (#{pageNo} * 5)
+	</select>
+	
+	<!-- 결재 리스트의 데이터 수 가져오기 -->
+	<select id="authDocTotalCount" parameterType="hashMap" resultType="int">
+		SELECT COUNT(auth_doc_num)
+		FROM
+		    auth_document
+		WHERE mem_id = #{memId}
+	</select>
+	
+	<!-- 결재 상세 정보 가져오기 -->
+	<select id="authDocDetail" parameterType="String" resultType="kr.or.ddit.util.auth.vo.AuthDocVO">
+		SELECT
+		    auth_doc_form_num
+		  , auth_doc_num
+		  , auth_line_num
+		  , mem_id
+		  , file_gr_num
+		  , rcp_code
+		  , title
+		  , content
+		  , rcp_date
+		  , auth_stat_code
+		FROM
+		    auth_document
+		WHERE 
+			auth_doc_num = #{authDocNum}
+	</select>
+	
+	<!--**********************************************************************************************************-->
+	
+</mapper>

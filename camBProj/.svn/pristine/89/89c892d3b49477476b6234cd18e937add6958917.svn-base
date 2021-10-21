@@ -1,0 +1,205 @@
+package kr.or.ddit.student.tuitionPayment.service.impl;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import kr.or.ddit.admin.member.vo.StudentVO;
+import kr.or.ddit.student.courseChange.vo.UniversityDepartmentVO;
+import kr.or.ddit.student.scholarship.vo.ScholarshipRecodeVO;
+import kr.or.ddit.student.tuitionPayment.mapper.TuitionPaymentMapper;
+import kr.or.ddit.student.tuitionPayment.service.TuitionPaymentService;
+import kr.or.ddit.student.tuitionPayment.vo.TuitionPaymentVO;
+
+/**
+ * 09/24
+ * - 가상 계좌 번호를 어떻게 만들어주지?
+ * - UNIV_DEPT77 하드코딩
+ * @author PC-08
+ *
+ */
+@Service
+public class TuitionPaymentServiceImpl implements TuitionPaymentService{
+	
+	@Autowired
+	TuitionPaymentMapper tuitionPaymentMapper;
+	
+
+	/**
+	 * (계절학기 제외한 정규학기 등록금 납부)
+	 * 등록금 납부 고지서 입력
+	 * 납부 기간이 되면 재학생을 대상으로 등록금 납부 고지서가 생성되어야 함
+	 * - vo list를 만들어서 다중 insert  
+	 */
+	@Override
+	public int tuitionPaymentInsert() {
+		
+		List<TuitionPaymentVO> list = new ArrayList<>(); 
+		
+		// 재학생(acad_stat_code : 01) / 신입생(acad_stat_code : NULL) 리스트 셀렉트
+		List<StudentVO> studentList = tuitionPaymentMapper.studentList();
+		
+		/* 학생 정보 바탕으로 (장학금/등록금정보필요) TuitionPaymentVO 만들어 리스트-맵에 담기
+		 * - 재학생일 경우 등록금 : 수업료
+		 * - 신입생일 경우 등록금 : 입학금 + 수업료
+		 */
+		Map<String, String> yearSemCode = getYearSemCode();
+		String year = yearSemCode.get("year");
+		String semCode = yearSemCode.get("semCode");
+				
+		List<UniversityDepartmentVO> univDepartList = tuitionPaymentMapper.univDepartList(new UniversityDepartmentVO());
+		for(StudentVO studentVo : studentList) {
+			
+			int idx = Integer.parseInt(studentVo.getUnivDeptNum().substring(9)) - 1; // 리스트에서 해당 학과 위치 구하기 (학과 번호로 정렬된 상태)
+			if(idx == 76) idx = 63; // UNIV_DEPT77 멀티미디어공학전공 : UNIV_DEPT64로 수정 필요. (현재 자식레코드가 있어서 수정 불가) 로직의 규칙에 안 맞아서 따로 하드코딩해줘야 함
+			
+			// 신입생의 경우 freshmanYn, 입학금 처리
+			String freshmanYn = "N";
+			int tuitFee = univDepartList.get(idx).getTuitFee();
+			if (!"01".equals(studentVo.getAcadStatCode())) {
+				tuitFee += univDepartList.get(idx).getAdmFee(); 
+				freshmanYn = "Y";
+			}
+			
+			// 장학금 정보 
+			int schola = 0;
+			ScholarshipRecodeVO scholarshipRecodeVo = getScholaRecode(studentVo.getStdId());
+			if(scholarshipRecodeVo!=null){
+				schola = scholarshipRecodeVo.getScholaAmt();
+			}
+			
+			// TuitionPaymentVO 만들어 list에 추가
+			TuitionPaymentVO tuitionPaymentVo = new TuitionPaymentVO();
+			tuitionPaymentVo.setStdId(studentVo.getStdId());
+			tuitionPaymentVo.setTuitFee(tuitFee);
+			tuitionPaymentVo.setBankCode(studentVo.getBankCode());
+			tuitionPaymentVo.setVrtAccntNum(studentVo.getBankAccntNum()); // 가상 계좌 번호를 어떻게 만들어주지?
+			tuitionPaymentVo.setFreshmanYn(freshmanYn);
+			tuitionPaymentVo.setYear(year);
+			tuitionPaymentVo.setSemCode(semCode);
+			tuitionPaymentVo.setActualPayAmt(tuitFee - schola);
+			list.add(tuitionPaymentVo);
+			System.out.println(">>" + tuitionPaymentVo.toString());
+		}
+		
+		// tuitionPaymentInsert 메서드 실행
+		Map<String, Object> map = new HashMap<>();
+		map.put("list", list);
+		int rowCnt = tuitionPaymentMapper.tuitionPaymentInsert(map);
+
+		return rowCnt;
+	}
+	
+	/**
+	 * 날짜를 기반으로 year, semcode 구하기
+	 */
+	public Map<String, String> getYearSemCode() {
+		Map<String, String> map = new HashMap<>();
+		
+		LocalDate now = LocalDate.now();
+		map.put("year", String.valueOf(now.getYear()));
+		
+		int month = now.getMonthValue();
+		// 정규 학기만 계산 - 1(3) ~ 6월 : 1학기 / 7(9) ~ 12월 : 2학기
+		String semCode = month < 7 ? "1" : "2";
+		map.put("semCode", semCode);
+		
+		return map;
+	}
+	
+	/**
+	 * 등록금 감면할 장학금 정보
+	 */
+	public ScholarshipRecodeVO getScholaRecode(String stdId) {
+		// 년도/학기 구하기
+		Map<String, String> yearSemCode = getYearSemCode();
+		String year = yearSemCode.get("year");
+		String semCode = yearSemCode.get("semCode");
+		
+		ScholarshipRecodeVO scholarshipRecodeVo = new ScholarshipRecodeVO();
+		scholarshipRecodeVo.setStdId(stdId);
+		scholarshipRecodeVo.setYear(year);
+		scholarshipRecodeVo.setSemCode(semCode);
+		scholarshipRecodeVo = tuitionPaymentMapper.scholaRecodeDetail(scholarshipRecodeVo);
+		
+		return scholarshipRecodeVo;
+	}
+	
+	/**
+	 * 등록금 내역 조회
+	 */
+	@Override
+	public List<TuitionPaymentVO> tuitionPaymentList(TuitionPaymentVO tuitionPaymentVo
+													, PaginationInfo paginationInfo){
+		// 페이징 처리
+		tuitionPaymentVo.setFirstIndex(paginationInfo.getFirstRecordIndex()+1); 
+		tuitionPaymentVo.setLastIndex(paginationInfo.getLastRecordIndex());	
+		
+		// 리스트 가져오기 
+		List<TuitionPaymentVO> tuitionPaymentList = tuitionPaymentMapper.tuitionPaymentList(tuitionPaymentVo);
+		return tuitionPaymentList;
+	}
+	
+	/**
+	 * 페이징 처리
+	 */
+	@Override
+	public PaginationInfo getPaginationInfo(TuitionPaymentVO tuitionPaymentVo) {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(tuitionPaymentVo.getPageNo());
+		paginationInfo.setRecordCountPerPage(5);
+		paginationInfo.setPageSize(5);
+		paginationInfo.setTotalRecordCount(tuitionPaymentMapper.tuitionPaymentTotalCount(tuitionPaymentVo));
+		return paginationInfo;
+	}
+	
+	/**
+	 * 등록금 납부 고지서 조회
+	 * Map : 학생vo, 장학금vo, 등록금vo
+	 */
+	@Override
+	public Map<String, Object> tuitionPaymentBillDetail(TuitionPaymentVO tuitionPaymentVo){
+		Map<String, Object> map = new HashMap<>();
+		
+		// 학생 정보 학과 이름, 등록 학기 수 
+		StudentVO studentVo = tuitionPaymentMapper.getStdInfo(tuitionPaymentVo.getStdId());
+		map.put("studentVo", studentVo);
+		// 학과 정보(대학 이름, 입학금, 등록금)
+		UniversityDepartmentVO universityDepartmentVo = new UniversityDepartmentVO();
+		universityDepartmentVo.setKorName(studentVo.getUnivDeptNum());
+		universityDepartmentVo = tuitionPaymentMapper.univDepartList(universityDepartmentVo).get(0);
+		map.put("universityDepartmentVo", universityDepartmentVo);
+		// 장학금 정보
+		map.put("scholarshipRecodeVo", getScholaRecode(tuitionPaymentVo.getStdId()));
+		// 등록금 정보 stdId year semCode 파라미터 필요
+		map.put("tuitionPaymentVo", tuitionPaymentMapper.tuitionPaymentBillDetail(tuitionPaymentVo));
+		
+		return map;
+	}
+	
+	
+	/**
+	 * 등록금 납부되었으면 업데이트
+	 * - 가상계좌 입금을 어떻게 확인하고 업데이트해주지? 스케줄러?
+	 * - rgst_sem + 1 해주기
+	 */
+	@Override
+	public int tuitionPaymentUpdate(TuitionPaymentVO tuitionPaymentVo) {
+		
+		// 가상계좌 입금 확인
+		
+		// regs_sem + 1
+		
+		// 신입생이라면 getAcadStatCode를 '01'로 업데이트
+		
+		return tuitionPaymentMapper.tuitionPaymentUpdate(tuitionPaymentVo); 
+		
+	}
+	
+}
